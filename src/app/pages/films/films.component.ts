@@ -1,10 +1,13 @@
 import { Component } from '@angular/core';
+import { RouterModule } from '@angular/router';
+import { CommonModule } from '@angular/common';
 
 @Component({
   selector: 'app-films',
-  imports: [],
+  standalone: true,
+  imports: [RouterModule, CommonModule],
   templateUrl: './films.component.html',
-  styleUrl: './films.component.css'
+  styleUrls: ['./films.component.css']
 })
 export class FilmsComponent {
 
