@@ -1,1 +1,14 @@
-<p>accueil works!</p>
+<div class="container mt-5">
+  <h2 class="mb-4">Films ajoutés le dernier mercredi</h2>
+  <div class="row">
+    <div class="col-md-4 mb-4" *ngFor="let film of filmsDuDernierMercredi">
+      <div class="card h-100">
+        <img [src]="film.imageUrl" class="card-img-top" alt="Affiche de {{ film.titre }}">
+        <div class="card-body">
+          <h5 class="card-title">{{ film.titre }}</h5>
+          <p class="card-text">{{ film.description }}</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
