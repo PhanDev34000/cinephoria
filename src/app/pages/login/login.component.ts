@@ -25,7 +25,7 @@ export class LoginComponent {
 
   onSubmit(): void {
     const { email, password } = this.form.value;
-
+    
     // Simulation des utilisateurs
     const utilisateurs = [
       { email: 'user@cinephoria.fr', password: 'User123!', role: 'utilisateur' },
@@ -37,10 +37,16 @@ export class LoginComponent {
       u => u.email === email && u.password === password
     );
 
-    if (user) {
-      localStorage.setItem('utilisateur', JSON.stringify(user));
+   if (user) {
+     localStorage.setItem('utilisateur', JSON.stringify(user));
+
+   if (localStorage.getItem('resetRequired') === 'true') {
+      localStorage.removeItem('resetRequired');
+      this.router.navigate(['/reset-password']);
+    } else {
       const redirect = this.route.snapshot.queryParamMap.get('redirectTo');
       this.router.navigate([redirect || '/']);
+    }
     } else {
       this.erreur = 'Identifiants incorrects.';
     }
