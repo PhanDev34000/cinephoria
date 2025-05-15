@@ -1,10 +1,4 @@
 import { Routes } from '@angular/router';
-import { AccueilComponent } from './pages/accueil/accueil.component';
-import { FilmsComponent } from './pages/films/films.component';
-import { ReservationComponent } from './pages/reservation/reservation.component';
-import { ContactComponent } from './pages/contact/contact.component';
-
-
 
 
 export const appRoutes: Routes = [
@@ -37,6 +31,29 @@ export const appRoutes: Routes = [
     path: 'administration',
     loadComponent: () =>
       import('./pages/administration/administration.component').then(m => m.AdministrationComponent)
+  },
+  {
+  path: 'register',
+  loadComponent: () =>
+    import('./pages/register/register.component').then((m) => m.RegisterComponent)
+  },
+  {
+  path: 'login',
+  loadComponent: () =>
+    import('./pages/login/login.component').then(m => m.LoginComponent)
+  },
+  {
+  path: 'forgot-password',
+  loadComponent: () =>
+    import('./pages/forgot-password/forgot-password.component').then(m => m.ForgotPasswordComponent)
+  },
+  {
+  path: 'reset-password',
+  loadComponent: () =>
+    import('./pages/reset-password/reset-password.component').then(m => m.ResetPasswordComponent)
   }
+
+
+
 ];
 
