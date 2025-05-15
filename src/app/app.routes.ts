@@ -31,6 +31,11 @@ export const appRoutes: Routes = [
     path: 'administration',
     loadComponent: () =>
       import('./pages/administration/administration.component').then(m => m.AdministrationComponent)
-  }
+  },
+  {
+  path: 'register',
+  loadComponent: () =>
+    import('./pages/register/register.component').then((m) => m.RegisterComponent)
+}
 ];
 
