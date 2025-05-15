@@ -1,8 +1,11 @@
 import { Component } from '@angular/core';
 import { RouterModule } from '@angular/router';
 import { CommonModule } from '@angular/common';
-import { FILMS } from '../../data/films.data';
-import { Film } from '../../models/film.model';
+import { FilmSimple } from '../../models/film-simple.model';
+import { FILMS_SIMPLE } from '../../data/film-simple.data';
+
+
+
 
 @Component({
   selector: 'app-accueil',
@@ -13,11 +16,13 @@ import { Film } from '../../models/film.model';
 
 })
 export class AccueilComponent {
-  filmsDuDernierMercredi: Film[] = [];
+  filmsDuDernierMercredi: FilmSimple[] = [];
 
   ngOnInit(): void {
     const dernierMercredi = this.getDernierMercredi();
-    this.filmsDuDernierMercredi = FILMS.filter(film => film.dateAjout === dernierMercredi);
+    this.filmsDuDernierMercredi = FILMS_SIMPLE.filter(
+      (film: FilmSimple) => film.dateAjout === dernierMercredi
+    );
   }
 
   getDernierMercredi(): string {
