@@ -15,5 +15,6 @@ export interface Film {
     qualite: string; // "4DX", "3D", etc.
     prix: number;
     cinema: string;
+    placesDisponibles: number;
   }[];
 }

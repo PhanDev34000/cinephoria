@@ -1,1 +1,67 @@
-<p>reservation works!</p>
+<div class="container mt-5">
+  <h2>Réserver une séance</h2>
+
+  <div class="mb-3">
+    <label for="cinema">Choisissez un cinéma :</label>
+    <select id="cinema" class="form-select" [(ngModel)]="selectedCinema">
+        <option value="" disabled>-- Sélectionner --</option>
+         <option *ngFor="let c of cinemas" [value]="c">{{ c }}</option>
+    </select>
+  </div>
+
+  <div class="mb-3">
+    <label for="film">Choisissez un film :</label>
+    <select id="film" class="form-select" [(ngModel)]="selectedFilmId">
+        <option [ngValue]="null" disabled>-- Sélectionner --</option>
+        <option *ngFor="let film of films" [ngValue]="film.id">{{ film.titre }}</option>
+    </select>
+
+  </div>
+
+  <div *ngIf="afficherSeances()" class="alert alert-info">
+    🎬 Vous avez sélectionné : <strong>{{ filmSelectionne?.titre }}</strong>
+    au cinéma <strong>{{ selectedCinema }}</strong>.
+    <br />
+    (Les séances s’afficheront ici à l’étape suivante)
+  </div>
+
+    <div class="mt-4" *ngIf="seancesFiltrees.length">
+        <h5>Séances disponibles :</h5>
+        <ul class="list-group">
+            <li class="list-group-item d-flex justify-content-between align-items-center"
+                *ngFor="let s of seancesFiltrees">
+            <div>
+                <strong>{{ s.jour }}</strong> — {{ s.debut }} à {{ s.fin }} ({{ s.qualite }})
+            </div>
+            <div>
+                <strong>{{ s.prix }} €</strong>
+                <button class="btn btn-sm btn-outline-primary ms-3" (click)="selectionnerSeance(s)">
+                    Réserver cette séance
+                </button>
+            </div>
+            </li>    
+        </ul>
+
+        <div *ngIf="seanceSelectionnee" class="mt-4 p-4 border rounded bg-light">
+            <h5>Réservation pour {{ filmSelectionne?.titre }} — {{ selectedCinema }}</h5>
+            <p>Séance : {{ seanceSelectionnee.jour }} à {{ seanceSelectionnee.debut }} ({{ seanceSelectionnee.qualite }})</p>
+
+            <div class="mb-3">
+                <label for="places">Nombre de places :</label>
+                <input type="number" id="places" class="form-control" [(ngModel)]="nbPlaces" min="1" max="10" />
+            </div>
+
+            <p><strong>Prix unitaire :</strong> {{ seanceSelectionnee.prix }} €</p>
+            <p><strong>Total :</strong> {{ seanceSelectionnee.prix * nbPlaces || 0 }} €</p>
+
+            <button class="btn btn-success mt-2" [disabled]="!nbPlaces" (click)="validerReservation()">
+                Valider la réservation
+            </button>
+        </div>
+
+    </div>
+    
+
+    
+</div>
+

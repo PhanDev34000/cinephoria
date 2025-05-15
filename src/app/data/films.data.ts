@@ -18,7 +18,8 @@ export const FILMS: Film[] = [
         fin: '20:00',
         qualite: '4DX',
         prix: 14,
-        cinema: 'Paris'
+        cinema: 'Paris',
+        placesDisponibles: 4
       },
       {
         jour: '2025-05-16',
@@ -26,7 +27,8 @@ export const FILMS: Film[] = [
         fin: '22:00',
         qualite: '3D',
         prix: 12,
-        cinema: 'Nantes'
+        cinema: 'Nantes',
+        placesDisponibles: 2
       }
     ]
   },
@@ -47,7 +49,8 @@ export const FILMS: Film[] = [
         fin: '19:30',
         qualite: '4K',
         prix: 10,
-        cinema: 'Lille'
+        cinema: 'Lille',
+        placesDisponibles: 5
       }
     ]
   },
@@ -68,7 +71,8 @@ export const FILMS: Film[] = [
         fin: '23:30',
         qualite: 'IMAX',
         prix: 16,
-        cinema: 'Toulouse'
+        cinema: 'Toulouse',
+        placesDisponibles: 1
       }
     ]
   }
