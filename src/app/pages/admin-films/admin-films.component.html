@@ -1,16 +1,30 @@
 <div class="container mt-4">
   <h3>🎬 Gestion des films</h3>
 
-  <form (ngSubmit)="ajouterFilm()" class="mb-4">
+  <h5 class="mt-4">🎬 Liste des films</h5>
+      <ul class="list-group mb-4">
+        <li *ngFor="let film of films" class="list-group-item d-flex justify-content-between align-items-center">
+          <div>
+            <strong>{{ film.titre }}</strong> — {{ film.ageMinimum }} ans — ⭐ {{ film.note }}
+          </div>
+          <div>
+            <button class="btn btn-sm btn-warning me-2" (click)="modifierFilm(film.id)">✏️</button>
+            <button class="btn btn-sm btn-danger" (click)="supprimerFilm(film.id)">🗑️</button>
+          </div>
+        </li>
+      </ul>
+
+
+  <form *ngIf="filmEnCours" (ngSubmit)="filmEnCours?.id ? enregistrerModification() : ajouterFilm()" class="mb-4">
     <div class="row">
       <div class="col-md-6">
-        <input class="form-control mb-2" [(ngModel)]="nouveauFilm.titre" name="titre" placeholder="Titre du film" required />
-        <input class="form-control mb-2" [(ngModel)]="nouveauFilm.imageUrl" name="imageUrl" placeholder="URL de l'affiche" />
-        <input class="form-control mb-2" [(ngModel)]="nouveauFilm.ageMinimum" name="age" type="number" placeholder="Âge minimum" />
+        <input class="form-control mb-2" [(ngModel)]="filmEnCours.titre" name="titre" placeholder="Titre du film" required />
+        <input class="form-control mb-2" [(ngModel)]="filmEnCours.imageUrl" name="imageUrl" placeholder="URL de l'affiche" />
+        <input class="form-control mb-2" [(ngModel)]="filmEnCours.ageMinimum" name="age" type="number" placeholder="Âge minimum" />
       </div>
       <div class="col-md-6">
-        <input class="form-control mb-2" [(ngModel)]="nouveauFilm.genre" name="genre" placeholder="Genre" />
-        <textarea class="form-control mb-2" [(ngModel)]="nouveauFilm.description" name="desc" placeholder="Description"></textarea>
+        <input class="form-control mb-2" [(ngModel)]="filmEnCours.genre" name="genre" placeholder="Genre" />
+        <textarea class="form-control mb-2" [(ngModel)]="filmEnCours.description" name="desc" placeholder="Description"></textarea>
         <button class="btn btn-success w-100" type="submit">➕ Ajouter un film</button>
       </div>
     </div>
@@ -22,6 +36,11 @@
       <div>
         <strong>{{ film.titre }}</strong> ({{ film.genre }}) - {{ film.ageMinimum }} ans
       </div>
+       <button class="btn btn-sm btn-warning me-2" (click)="modifierFilm(film.id)">✏️</button>
+       <button class="btn btn-success mt-2">
+          {{ filmEnCours?.id ? '💾 Enregistrer les modifications' : '➕ Ajouter le film' }}
+       </button>
+
       <button class="btn btn-sm btn-danger" (click)="supprimerFilm(film.id)">🗑️ Supprimer</button>
     </li>
   </ul>
