@@ -1,0 +1,25 @@
+<div class="container mt-4">
+  <h3>🏟️ Gestion des salles</h3>
+
+  <ul class="list-group mb-4">
+    <li *ngFor="let salle of salles" class="list-group-item d-flex justify-content-between align-items-center">
+      {{ salle.nom }} — {{ salle.capacite }} places — {{ salle.qualite }}
+      <button class="btn btn-sm btn-danger" (click)="supprimerSalle(salle.id)">🗑️</button>
+    </li>
+  </ul>
+
+  <form (ngSubmit)="ajouterSalle()">
+    <div class="row">
+      <div class="col-md-4 mb-2">
+        <input class="form-control" placeholder="Nom de la salle" [(ngModel)]="nouvelleSalle.nom" name="nom" required />
+      </div>
+      <div class="col-md-4 mb-2">
+        <input class="form-control" type="number" placeholder="Capacité" [(ngModel)]="nouvelleSalle.capacite" name="capacite" required />
+      </div>
+      <div class="col-md-4 mb-2">
+        <input class="form-control" placeholder="Qualité (4K, 3D...)" [(ngModel)]="nouvelleSalle.qualite" name="qualite" required />
+      </div>
+    </div>
+    <button class="btn btn-success mt-2">➕ Ajouter la salle</button>
+  </form>
+</div>

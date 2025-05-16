@@ -1,0 +1,50 @@
+<div class="container mt-4">
+  <h3>🗓️ Gestion des séances</h3>
+
+  <div class="mb-3">
+    <label for="filmSelect" class="form-label">Choisissez un film :</label>
+    <select id="filmSelect" class="form-select" [(ngModel)]="filmSelectionne">
+      <option [ngValue]="null" disabled>-- Sélectionner un film --</option>
+      <option *ngFor="let f of films" [ngValue]="f">{{ f.titre }}</option>
+    </select>
+  </div>
+
+  <div *ngIf="filmSelectionne">
+    <h5 class="mt-4">Séances pour {{ filmSelectionne.titre }}</h5>
+    <ul class="list-group mb-4">
+      <li *ngFor="let s of filmSelectionne.seances" class="list-group-item d-flex justify-content-between align-items-center">
+        <div>
+          {{ s.jour }} - {{ s.debut }} à {{ s.fin }} ({{ s.qualite }}, {{ s.cinema }}) | {{ s.prix }} € | {{ s.placesDisponibles }} places
+        </div>
+        <button class="btn btn-sm btn-danger" (click)="supprimerSeance(s.id)">🗑️</button>
+      </li>
+    </ul>
+
+    <form (ngSubmit)="ajouterSeance()">
+      <div class="row">
+        <div class="col-md-4 mb-2">
+          <input class="form-control" placeholder="Jour (YYYY-MM-DD)" [(ngModel)]="nouvelleSeance.jour" name="jour" required />
+        </div>
+        <div class="col-md-2 mb-2">
+          <input class="form-control" placeholder="Début (HH:MM)" [(ngModel)]="nouvelleSeance.debut" name="debut" required />
+        </div>
+        <div class="col-md-2 mb-2">
+          <input class="form-control" placeholder="Fin (HH:MM)" [(ngModel)]="nouvelleSeance.fin" name="fin" required />
+        </div>
+        <div class="col-md-4 mb-2">
+          <input class="form-control" placeholder="Qualité (4K, 3D...)" [(ngModel)]="nouvelleSeance.qualite" name="qualite" required />
+        </div>
+        <div class="col-md-4 mb-2">
+          <input class="form-control" placeholder="Cinéma" [(ngModel)]="nouvelleSeance.cinema" name="cinema" required />
+        </div>
+        <div class="col-md-4 mb-2">
+          <input class="form-control" placeholder="Prix (€)" type="number" [(ngModel)]="nouvelleSeance.prix" name="prix" required />
+        </div>
+        <div class="col-md-4 mb-2">
+          <input class="form-control" placeholder="Places disponibles" type="number" [(ngModel)]="nouvelleSeance.placesDisponibles" name="placesDisponibles" required />
+        </div>
+      </div>
+      <button class="btn btn-success mt-2">➕ Ajouter la séance</button>
+    </form>
+  </div>
+</div>
