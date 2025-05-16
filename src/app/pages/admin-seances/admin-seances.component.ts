@@ -15,6 +15,8 @@ export class AdminSeancesComponent {
   films: Film[] = FILMS;
   filmSelectionne: Film | null = null;
   nouvelleSeance: any = {};
+  seanceEnCours: any = null;
+  
   
 
   ajouterSeance() {
@@ -30,6 +32,18 @@ console.log('filmSelectionne.seances est un tableau ?', Array.isArray(this.filmS
     this.filmSelectionne.seances.push(seanceAvecId);
     alert('Séance ajoutée ✅');
     this.nouvelleSeance = {};
+
+    this.seanceEnCours = {
+  id: 0,
+  jour: '',
+  debut: '',
+  fin: '',
+  qualite: '',
+  prix: 0,
+  cinema: '',
+  placesDisponibles: 0
+};
+
   }
 
   supprimerSeance(seanceId: number) {
@@ -37,4 +51,25 @@ console.log('filmSelectionne.seances est un tableau ?', Array.isArray(this.filmS
     this.filmSelectionne.seances = this.filmSelectionne.seances.filter(s => s.id !== seanceId);
     alert('Séance supprimée ❌');
   }
+  modifierSeance(seance: any) {
+  this.seanceEnCours = { ...seance };
+  }
+  enregistrerModification() {
+  if (!this.filmSelectionne) return;
+
+  const index = this.filmSelectionne.seances.findIndex(s => s.id === this.seanceEnCours.id);
+  if (index !== -1) {
+    this.filmSelectionne.seances[index] = {
+      ...this.seanceEnCours,
+      prix: Number(this.seanceEnCours.prix),
+      placesDisponibles: Number(this.seanceEnCours.placesDisponibles)
+    };
+    alert('📝 Séance modifiée avec succès');
+   
+    this.seanceEnCours = null;
+
+  }
+  }
+
+
 }

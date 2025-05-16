@@ -16,35 +16,41 @@
         <div>
           {{ s.jour }} - {{ s.debut }} à {{ s.fin }} ({{ s.qualite }}, {{ s.cinema }}) | {{ s.prix }} € | {{ s.placesDisponibles }} places
         </div>
+        <button class="btn btn-sm btn-warning me-2" (click)="modifierSeance(s)">✏️</button>
         <button class="btn btn-sm btn-danger" (click)="supprimerSeance(s.id)">🗑️</button>
       </li>
     </ul>
 
-    <form (ngSubmit)="ajouterSeance()">
+    <form (ngSubmit)="seanceEnCours?.id ? enregistrerModification() : ajouterSeance()">
+
       <div class="row">
         <div class="col-md-4 mb-2">
-          <input class="form-control" placeholder="Jour (YYYY-MM-DD)" [(ngModel)]="nouvelleSeance.jour" name="jour" required />
+          <input class="form-control" placeholder="Jour (YYYY-MM-DD)" [(ngModel)]="seanceEnCours.jour" name="jour" required />
         </div>
         <div class="col-md-2 mb-2">
-          <input class="form-control" placeholder="Début (HH:MM)" [(ngModel)]="nouvelleSeance.debut" name="debut" required />
+          <input class="form-control" placeholder="Début (HH:MM)" [(ngModel)]="seanceEnCours.debut" name="debut" required />
         </div>
         <div class="col-md-2 mb-2">
-          <input class="form-control" placeholder="Fin (HH:MM)" [(ngModel)]="nouvelleSeance.fin" name="fin" required />
+          <input class="form-control" placeholder="Fin (HH:MM)" [(ngModel)]="seanceEnCours.fin" name="fin" required />
         </div>
         <div class="col-md-4 mb-2">
-          <input class="form-control" placeholder="Qualité (4K, 3D...)" [(ngModel)]="nouvelleSeance.qualite" name="qualite" required />
+          <input class="form-control" placeholder="Qualité (4K, 3D...)" [(ngModel)]="seanceEnCours.qualite" name="qualite" required />
         </div>
         <div class="col-md-4 mb-2">
-          <input class="form-control" placeholder="Cinéma" [(ngModel)]="nouvelleSeance.cinema" name="cinema" required />
+          <input class="form-control" placeholder="Cinéma" [(ngModel)]="seanceEnCours.cinema" name="cinema" required />
         </div>
         <div class="col-md-4 mb-2">
-          <input class="form-control" placeholder="Prix (€)" type="number" [(ngModel)]="nouvelleSeance.prix" name="prix" required />
+          <input class="form-control" placeholder="Prix (€)" type="number" [(ngModel)]="seanceEnCours.prix" name="prix" required />
         </div>
         <div class="col-md-4 mb-2">
-          <input class="form-control" placeholder="Places disponibles" type="number" [(ngModel)]="nouvelleSeance.placesDisponibles" name="placesDisponibles" required />
+          <input class="form-control" placeholder="Places disponibles" type="number" [(ngModel)]="seanceEnCours.placesDisponibles" name="placesDisponibles" required />
         </div>
       </div>
       <button class="btn btn-success mt-2">➕ Ajouter la séance</button>
+      <button class="btn btn-success mt-2">
+         {{ seanceEnCours?.id ? '💾 Enregistrer les modifications' : '➕ Ajouter la séance' }}
+      </button>
+
     </form>
   </div>
 </div>
