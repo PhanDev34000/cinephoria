@@ -66,6 +66,11 @@ export const appRoutes: Routes = [
   path: 'admin-salles',
   loadComponent: () =>
     import('./pages/admin-salles/admin-salles.component').then(m => m.AdminSallesComponent) 
+  },
+   {
+  path: 'intranet-avis',
+  loadComponent: () =>
+    import('./pages/employe-avis/employe-avis.component').then(m => m.EmployeAvisComponent) 
   }
   
 
