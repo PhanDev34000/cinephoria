@@ -13,6 +13,7 @@ export const FILMS: Film[] = [
     cinemas: ['Paris', 'Nantes'],
     seances: [
       {
+        id: 101,
         jour: '2025-05-15',
         debut: '18:00',
         fin: '20:00',
@@ -22,6 +23,7 @@ export const FILMS: Film[] = [
         placesDisponibles: 4
       },
       {
+        id: 102,
         jour: '2025-05-16',
         debut: '20:00',
         fin: '22:00',
@@ -44,6 +46,7 @@ export const FILMS: Film[] = [
     cinemas: ['Lille', 'Charleroi'],
     seances: [
       {
+        id: 201,
         jour: '2025-05-15',
         debut: '17:30',
         fin: '19:30',
@@ -66,6 +69,7 @@ export const FILMS: Film[] = [
     cinemas: ['Toulouse'],
     seances: [
       {
+        id: 301,
         jour: '2025-05-16',
         debut: '21:00',
         fin: '23:30',

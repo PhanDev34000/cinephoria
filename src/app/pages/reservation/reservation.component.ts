@@ -41,41 +41,33 @@ export class ReservationComponent {
     this.seanceSelectionnee = seance;
   }
 
- validerReservation() {
-  if (!localStorage.getItem('utilisateur')) {
-    alert("Vous devez être connecté pour réserver.");
-    window.location.href = '/login?redirectTo=/reservation';
+ validerReservation(): void {
+  const utilisateurStr = localStorage.getItem('utilisateur');
+  if (!utilisateurStr) {
+    alert('❌ Vous devez être connecté pour réserver.');
     return;
   }
 
-  if (this.nbPlaces > this.seanceSelectionnee.placesDisponibles) {
-    alert(`❌ Il ne reste que ${this.seanceSelectionnee.placesDisponibles} places pour cette séance.`);
-    return;
-  }
+  const utilisateur = JSON.parse(utilisateurStr);
 
-  // Récupération des réservations existantes
-  const commandes = JSON.parse(localStorage.getItem('commandes') || '[]');
-
-  const nouvelleCommande = {
-    utilisateur: JSON.parse(localStorage.getItem('utilisateur') || '{}'),
-    film: this.filmSelectionne?.titre,
-    cinema: this.selectedCinema,
+  const nouvelleReservation = {
+    utilisateur: utilisateur.email,
+    film: this.filmSelectionne,
     seance: this.seanceSelectionnee,
-    places: this.nbPlaces,
-    total: this.nbPlaces * this.seanceSelectionnee.prix,
-    date: new Date().toISOString()
+    nbPlaces: this.nbPlaces
   };
 
-  commandes.push(nouvelleCommande);
-  localStorage.setItem('commandes', JSON.stringify(commandes));
+  const reservationsStr = localStorage.getItem('reservations');
+  const reservations = reservationsStr ? JSON.parse(reservationsStr) : [];
 
-  // Mise à jour des places restantes (optionnel en local)
-  this.seanceSelectionnee.placesDisponibles -= this.nbPlaces;
+  reservations.push(nouvelleReservation);
+  localStorage.setItem('reservations', JSON.stringify(reservations));
 
-  alert('🎉 Réservation enregistrée avec succès !');
-  this.nbPlaces = 0;
+  alert('✅ Réservation confirmée');
   this.seanceSelectionnee = null;
+  this.nbPlaces = 1;
 }
+
 
 
 }

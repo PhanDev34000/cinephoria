@@ -51,7 +51,28 @@ export const appRoutes: Routes = [
   path: 'reset-password',
   loadComponent: () =>
     import('./pages/reset-password/reset-password.component').then(m => m.ResetPasswordComponent)
+  },
+  {
+  path: 'admin-films',
+  loadComponent: () =>
+    import('./pages/admin-films/admin-films.component').then(m => m.AdminFilmsComponent)
+  },
+  {
+  path: 'admin-seances',
+  loadComponent: () =>
+    import('./pages/admin-seances/admin-seances.component').then(m => m.AdminSeancesComponent)
+  },
+  {
+  path: 'admin-salles',
+  loadComponent: () =>
+    import('./pages/admin-salles/admin-salles.component').then(m => m.AdminSallesComponent) 
+  },
+   {
+  path: 'intranet-avis',
+  loadComponent: () =>
+    import('./pages/employe-avis/employe-avis.component').then(m => m.EmployeAvisComponent) 
   }
+  
 
 
 
