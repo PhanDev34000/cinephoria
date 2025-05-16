@@ -12,6 +12,8 @@ import { SALLES } from '../../data/salles.data';
   styleUrls: ['./admin-salles.component.css']
 })
 export class AdminSallesComponent {
+  salleEnCours: any = null;
+
   salles: Salle[] = [...SALLES]; // copie locale
   nouvelleSalle: Salle = {
     id: 0,
@@ -25,10 +27,39 @@ export class AdminSallesComponent {
     this.salles.push(salle);
     this.nouvelleSalle = { id: 0, nom: '', capacite: 0, qualite: '' };
     alert('Salle ajoutée ✅');
+
+    this.salleEnCours = {
+      id: 0,
+      nom: '',
+      capacite: 0,
+      qualite: ''
+  };
+
   }
 
   supprimerSalle(id: number): void {
     this.salles = this.salles.filter(s => s.id !== id);
     alert('Salle supprimée ❌');
   }
+
+ modifierSalle(id: number) {
+  const salle = this.salles.find(s => s.id === id);
+  if (salle) {
+    this.salleEnCours = { ...salle };
+  }
+}
+
+  enregistrerModification() {
+  const index = this.salles.findIndex(s => s.id === this.salleEnCours.id);
+  if (index !== -1) {
+    this.salles[index] = {
+      ...this.salleEnCours,
+      capacite: Number(this.salleEnCours.capacite)
+    };
+    alert('🏟️ Salle modifiée');
+    this.salleEnCours = null;
+  }
+  }
+
+
 }
