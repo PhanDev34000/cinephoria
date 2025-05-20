@@ -11,8 +11,14 @@ import { SALLES } from '../../data/salles.data';
   templateUrl: './admin-salles.component.html',
   styleUrls: ['./admin-salles.component.css']
 })
+
 export class AdminSallesComponent {
-  salleEnCours: any = null;
+  salleEnCours: Salle | null = {
+  id: 0,
+  nom: '',
+  capacite: 0,
+  qualite: ''
+};
 
   salles: Salle[] = [...SALLES]; // copie locale
   nouvelleSalle: Salle = {
@@ -50,7 +56,8 @@ export class AdminSallesComponent {
 }
 
   enregistrerModification() {
-  const index = this.salles.findIndex(s => s.id === this.salleEnCours.id);
+  if (this.salleEnCours) {
+  const index = this.salles.findIndex(s => s.id === this.salleEnCours!.id);
   if (index !== -1) {
     this.salles[index] = {
       ...this.salleEnCours,
@@ -59,6 +66,8 @@ export class AdminSallesComponent {
     alert('🏟️ Salle modifiée');
     this.salleEnCours = null;
   }
+}
+
   }
 
 
