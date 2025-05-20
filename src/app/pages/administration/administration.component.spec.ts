@@ -1,6 +1,6 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-
 import { AdministrationComponent } from './administration.component';
+import { ActivatedRoute } from '@angular/router';
 
 describe('AdministrationComponent', () => {
   let component: AdministrationComponent;
@@ -8,7 +8,10 @@ describe('AdministrationComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [AdministrationComponent]
+      imports: [AdministrationComponent],
+      providers: [
+    { provide: ActivatedRoute, useValue: {} }
+]
     })
     .compileComponents();
 

@@ -15,7 +15,6 @@ import { Film } from '../../models/film.model';
 export class ReservationComponent {
   cinemas = CINEMAS;
   films = FILMS;
-
   selectedCinema: string = '';
   selectedFilmId: number | null = null;
 
@@ -49,7 +48,6 @@ export class ReservationComponent {
   }
 
   const utilisateur = JSON.parse(utilisateurStr);
-
   const nouvelleReservation = {
     utilisateur: utilisateur.email,
     film: this.filmSelectionne,

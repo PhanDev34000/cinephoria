@@ -1,6 +1,6 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-
 import { EmployeDashboardComponent } from './employe-dashboard.component';
+import { ActivatedRoute } from '@angular/router';
 
 describe('EmployeDashboardComponent', () => {
   let component: EmployeDashboardComponent;
@@ -8,7 +8,10 @@ describe('EmployeDashboardComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [EmployeDashboardComponent]
+      imports: [EmployeDashboardComponent],
+      providers: [
+    { provide: ActivatedRoute, useValue: {} }
+]
     })
     .compileComponents();
 
