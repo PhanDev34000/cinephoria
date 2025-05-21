@@ -13,6 +13,7 @@ import { SALLES } from '../../data/salles.data';
 })
 
 export class AdminSallesComponent {
+  
   salleEnCours: Salle | null = {
   id: 0,
   nom: '',

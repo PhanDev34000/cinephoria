@@ -1,7 +1,8 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { RouterModule } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { ReservationService } from '../../services/reservation.service';
 
 
 @Component({
@@ -16,16 +17,37 @@ export class MonEspaceComponent {
   utilisateur: any = null;
   reservations: any[] = [];
   filmANoter: any = null;
-  note: number = 5;
+  note: number | null = null;
   commentaire: string = '';
+  notesPossibles: number[] = [1, 2, 3, 4, 5];
+
+
+  constructor(private reservationService: ReservationService) {}
 
   ngOnInit(): void {
-    const userStr = localStorage.getItem('utilisateur');
-    if (userStr) {
-      this.utilisateur = JSON.parse(userStr);
-      this.chargerReservations();
-    }
+  const utilisateurStr = localStorage.getItem('utilisateur');
+  if (!utilisateurStr) {
+    alert('⚠️ Vous devez être connecté pour voir vos réservations.');
+    return;
   }
+
+  const utilisateur = JSON.parse(utilisateurStr);
+  const email = utilisateur.email;
+
+  console.log('📧 Email utilisé pour la recherche :', email);
+
+
+  this.reservationService.getReservationsParEmail(utilisateur.email).subscribe({
+    next: (data) => {
+      this.reservations = data;
+      console.log('📩 Réservations récupérées :', data);
+    },
+    error: () => {
+      alert('❌ Erreur lors du chargement des réservations');
+    }
+  });
+}
+
 
   chargerReservations(): void {
     const allReservationsStr = localStorage.getItem('reservations');
@@ -41,25 +63,47 @@ export class MonEspaceComponent {
     return new Date(dateJour) < new Date();
   }
 
+  
+
+  supprimerReservation(id: string): void {
+    if (confirm('❌ Confirmer la suppression de cette réservation ?')) {
+      this.reservationService.deleteReservation(id).subscribe({
+        next: () => {
+          this.reservations = this.reservations.filter(r => r._id !== id);
+          alert('🗑️ Réservation supprimée');
+        },
+        error: () => alert('Erreur lors de la suppression')
+      });
+    }
+  }
+
   soumettreAvis(): void {
-  const nouvelAvis = {
-    filmId: this.filmANoter.film.id,
-    utilisateur: this.utilisateur.email,
+  const utilisateurStr = localStorage.getItem('utilisateur');
+  if (!utilisateurStr) {
+    alert('❌ Connectez-vous pour laisser un avis.');
+    return;
+  }
+
+  const utilisateur = JSON.parse(utilisateurStr);
+
+  const avis = {
+    titreFilm: this.filmANoter.titre,
     note: this.note,
     commentaire: this.commentaire,
-    valide: false // par défaut, pas encore validé
+    email: utilisateur.email
   };
 
-  const avisStr = localStorage.getItem('avis');
-  const avis = avisStr ? JSON.parse(avisStr) : [];
-
-  avis.push(nouvelAvis);
-  localStorage.setItem('avis', JSON.stringify(avis));
-
-  alert('✅ Votre avis a bien été soumis. Il sera validé par un employé.');
-  this.filmANoter = null;
-  this.note = 5;
-  this.commentaire = '';
+  this.reservationService.envoyerAvis(avis).subscribe({
+    next: () => {
+      alert('✅ Avis envoyé !');
+      this.filmANoter = null;
+      this.note = 1;
+      this.commentaire = '';
+    },
+    error: () => alert('Erreur lors de l’envoi de l’avis.')
+  });
 }
+
+
 
 }

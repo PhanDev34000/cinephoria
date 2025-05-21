@@ -1,0 +1,7 @@
+.form-check-input {
+  display: inline-block !important;
+  width: auto !important;
+  margin-right: 5px;
+  visibility: visible !important;
+  position: static !important;
+}
