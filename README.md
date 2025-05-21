@@ -1,3 +1,8 @@
+ ![Angular](https://img.shields.io/badge/Angular-16-red)
+![Node.js](https://img.shields.io/badge/Node.js-18-green)
+![MongoDB](https://img.shields.io/badge/MongoDB-Atlas-brightgreen)
+
+ 
                                         README
 
 # Cinéphoria - Application Web
@@ -63,6 +68,13 @@ Le projet est désormais connecté à une base de données MongoDB Atlas via un 
         Dans un autre terminal
             node server.js
         Accès : http://localhost:3000 (site complet, BDD incluse)
+
+## Organisation du backend (Node.js)
+root/
+├── server.js               # Point d'entrée principal
+├── routes/                 # Routes Express (/films, /users, etc.)
+├── models/                 # Schémas Mongoose (Film, Reservation, Avis...)
+├── .env                    # Variables d'environnement (non versionné)
 
 ## Tests réalisés :
 •	Tests unitaires sur 12 User Stories (US1 à US12)
