@@ -5,6 +5,8 @@ import { Film } from '../../models/film.model';
 import { FILMS } from '../../data/films.data';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
+import { FilmService } from '../../services/film.service';
+
 
 
 @Component({
@@ -16,10 +18,22 @@ import { Router } from '@angular/router';
 })
 export class FilmsComponent {
 
-  films: Film[] = FILMS;
+  films: Film[] = [];
   filmActif: Film | null = null;
 
-  constructor(private router: Router) {}
+  constructor(private router: Router, private filmService: FilmService) {}
+
+  ngOnInit(): void {
+  this.filmService.getFilms().subscribe({
+    next: (data) => {
+      console.log('✅ Films chargés depuis l’API :', data);
+      this.films = data;
+      console.log('Films chargés depuis l’API :', data);
+    },
+    error: (err) => console.error('Erreur chargement films :', err)
+  });
+}
+
 
 
 // Filtres

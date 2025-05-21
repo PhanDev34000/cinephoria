@@ -9,6 +9,7 @@ export interface Film {
   note: number; // de 0 à 5
   imageUrl: string;
   genre: string;
+  dateAjout?: string;
   cinemas: string[]; // ex : ["Paris", "Lille"]
   seances: Seance[];
   };
