@@ -1,0 +1,6 @@
+footer {
+  background-color: var(--color-primary);
+  color: white; /* Pour garantir un bon contraste */
+  padding: 1rem;
+  text-align: center;
+}

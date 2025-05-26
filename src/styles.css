@@ -1,0 +1,17 @@
+/* Police */
+body {
+  font-family: 'Sora', sans-serif;
+}
+
+h1, h2, h3, h4 {
+  font-family: 'Outfit', sans-serif;
+}
+
+/* Couleur */
+
+:root {
+  --color-primary: #2A48D4;
+  --color-accent: #FFF8DC;
+  --color-text-dark: #1e1e1e;
+  --color-text-light: #ffffff;
+}

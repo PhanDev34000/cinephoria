@@ -1,0 +1,47 @@
+<div class="container mt-4">
+  <h3>🎟️ Mes réservations</h3>
+
+  <div *ngIf="reservations.length; else vide">
+    <div class="card mb-3" *ngFor="let r of reservations">
+      <div class="card-body">
+        <h5 class="card-title">{{ r.film.titre }}</h5>
+        <p class="card-text">
+          📍 Cinéma : {{ r.seance.cinema }}<br />
+          📅 Séance : {{ r.seance.jour }} – {{ r.seance.debut }} à {{ r.seance.fin }}<br />
+          👥 Places : {{ r.nbPlaces }}<br />
+          💰 Total : {{ r.nbPlaces * r.seance.prix }} €
+        </p>
+
+        <div *ngIf="estExpiree(r.seance.jour)">
+            <div *ngIf="estExpiree(r.seance.jour)">
+                <button class="btn btn-sm btn-outline-primary" (click)="filmANoter = r">
+                    ⭐ Noter le film
+                </button>
+            </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <ng-template #vide>
+    <p class="text-muted">Aucune réservation enregistrée.</p>
+  </ng-template>
+</div>
+<div *ngIf="filmANoter" class="mt-5 p-4 border rounded bg-light">
+  <h5>⭐ Laisser un avis pour {{ filmANoter.film.titre }}</h5>
+
+  <div class="mb-3">
+    <label for="note">Note (1 à 5) :</label>
+    <select id="note" class="form-select" [(ngModel)]="note">
+      <option *ngFor="let n of [1, 2, 3, 4, 5]" [value]="n">{{ n }}</option>
+    </select>
+  </div>
+
+  <div class="mb-3">
+    <label for="commentaire">Commentaire :</label>
+    <textarea id="commentaire" class="form-control" rows="3" [(ngModel)]="commentaire"></textarea>
+  </div>
+
+  <button class="btn btn-success" (click)="soumettreAvis()">💾 Envoyer l’avis</button>
+  <button class="btn btn-secondary ms-2" (click)="filmANoter = null">❌ Annuler</button>
+</div>

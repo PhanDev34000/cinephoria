@@ -1,0 +1,23 @@
+<div class="container mt-5">
+  <h2>Contactez Cinéphoria</h2>
+
+  <form (ngSubmit)="envoyerMessage()">
+    <div class="mb-3">
+      <label for="nomUtilisateur" class="form-label">Nom d'utilisateur (facultatif)</label>
+      <input id="nomUtilisateur" class="form-control" [(ngModel)]="nomUtilisateur" name="nomUtilisateur" />
+    </div>
+
+    <div class="mb-3">
+      <label for="titre" class="form-label">Titre *</label>
+      <input id="titre" class="form-control" [(ngModel)]="titre" name="titre" required />
+    </div>
+
+    <div class="mb-3">
+      <label for="description" class="form-label">Description *</label>
+      <textarea id="description" class="form-control" rows="5" [(ngModel)]="description" name="description" required></textarea>
+    </div>
+
+    <button type="submit" class="btn btn-primary">Envoyer</button>
+  </form>
+</div>
+

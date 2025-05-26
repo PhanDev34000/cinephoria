@@ -1,0 +1,80 @@
+<div class="container mt-4">
+  <h2 class="mb-3">Filtrer les films</h2>
+  <form class="row g-3 mb-4">
+    <div class="col-md-4">
+      <label for="cinema" class="form-label">Cinéma</label>
+      <select id="cinema" class="form-select" [(ngModel)]="cinemaFiltre" name="cinema">
+        <option value="">Tous</option>
+        <option *ngFor="let c of cinemas" [value]="c">{{ c }}</option>
+      </select>
+    </div>
+
+    <div class="col-md-4">
+      <label for="genre" class="form-label">Genre</label>
+      <select id="genre" class="form-select" [(ngModel)]="genreFiltre" name="genre">
+        <option value="">Tous</option>
+        <option *ngFor="let g of genres" [value]="g">{{ g }}</option>
+      </select>
+    </div>
+
+    <div class="col-md-4">
+      <label for="jour" class="form-label">Jour</label>
+      <input type="date" id="jour" class="form-control" [(ngModel)]="jourFiltre" name="jour" />
+    </div>
+  </form>
+</div>
+
+
+
+
+<!-- Affichage des films  -->
+<div class="container mt-5">
+  <h2 class="mb-4">Tous les films projetés</h2>
+  <div class="row">
+    <div class="col-md-4 mb-4" *ngFor="let film of filmsFiltres">
+      <div class="card h-100">
+        <img [src]="film.imageUrl" class="card-img-top" [alt]="film.titre" />
+        <div class="card-body">
+          <h5 class="card-title">{{ film.titre }}</h5>
+          <p class="card-text">{{ film.description }}</p>
+          <p class="mb-1">Âge minimum : {{ film.ageMinimum }} ans</p>
+          <p class="mb-1">
+            Coup de cœur :
+            <span class="badge" [ngClass]="film.coupDeCoeur ? 'bg-success' : 'bg-secondary'">
+              {{ film.coupDeCoeur ? 'Oui' : 'Non' }}
+            </span>
+          </p>
+          <p class="mb-0">Note : ⭐ {{ film.note }} / 5</p>
+        </div>
+        <button class="btn btn-outline-primary w-100 mt-2" (click)="toggleSeances(film)">
+      {{ film === filmActif ? 'Masquer les séances' : 'Voir les séances' }}
+    </button>
+
+    <p *ngIf="film === filmActif" class="text-danger">SÉANCES AFFICHÉES POUR CE FILM</p>
+
+
+    <div *ngIf="film === filmActif" class="mt-3">
+  <h6>Séances disponibles :</h6>
+  <ul class="list-group">
+    <li class="list-group-item d-flex justify-content-between align-items-center"
+        *ngFor="let seance of film.seances">
+      <div>
+        <strong>{{ seance.jour }}</strong> - {{ seance.debut }} à {{ seance.fin }} ({{ seance.qualite }})
+      </div>
+      <div>
+        {{ seance.prix }} €
+        <button class="btn btn-sm btn-primary ms-3"
+                (click)="allerReservation(film, seance)">
+          Réserver
+        </button>
+      </div>
+    </li>
+  </ul>
+</div>
+      </div>
+    </div>
+    
+
+
+  </div>
+</div>

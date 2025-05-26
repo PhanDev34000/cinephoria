@@ -1,0 +1,6 @@
+.navbar {
+  background-color: var(--color-primary);
+  color: white; 
+  padding: 1rem;
+  text-align: center;
+}
