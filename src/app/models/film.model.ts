@@ -11,11 +11,7 @@ export interface Film {
   note: number; // de 0 à 5
   imageUrl: string;
   genre: string;
-<<<<<<< HEAD
   cinemas: string[]; // ex : ["Paris", "Lille"]
-=======
   dateAjout?: string;
-  cinemas: string[]; 
->>>>>>> 62891e6 (MAJ affiche+couleur+police+filtre)
   seances: Seance[];
   };

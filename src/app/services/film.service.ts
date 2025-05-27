@@ -20,9 +20,9 @@ export class FilmService {
 }
 
 
-  addFilm(film: Film): Observable<Film> {
-    return this.http.post<Film>(this.apiUrl, film);
+  //addFilm(film: Film): Observable<Film> {
+    //return this.http.post<Film>(this.apiUrl, film);
   }
 
   // Ajouter updateFilm et deleteFilm plus tard
-}
+

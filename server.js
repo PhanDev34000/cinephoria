@@ -42,5 +42,5 @@ app.listen(PORT, () => {
   console.log(`🚀 Serveur démarré sur http://localhost:${PORT}`);
 });
 
-const reservationRoutes = require('./routes/reservation.routes');
-app.use('/api/reservations', reservationRoutes);
+//const reservationRoutes = require('./routes/reservation.routes');
+// app.use('/api/reservations', reservationRoutes);
