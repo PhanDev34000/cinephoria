@@ -1,4 +1,5 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
+import { ReservationService } from '../../services/reservation.service';
 import { RouterModule } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
@@ -12,54 +13,38 @@ import { FormsModule } from '@angular/forms';
   styleUrls: ['./mon-espace.component.css']
 })
 
-export class MonEspaceComponent {
-  utilisateur: any = null;
+export class MonEspaceComponent implements OnInit {
   reservations: any[] = [];
-  filmANoter: any = null;
-  note: number = 5;
-  commentaire: string = '';
+
+  constructor(private reservationService: ReservationService) {}
 
   ngOnInit(): void {
-    const userStr = localStorage.getItem('utilisateur');
-    if (userStr) {
-      this.utilisateur = JSON.parse(userStr);
-      this.chargerReservations();
+    const utilisateur = JSON.parse(localStorage.getItem('utilisateur') || '{}');
+
+    if (utilisateur.email) {
+      this.reservationService.getReservations().subscribe({
+        next: (data) => {
+          this.reservations = data.filter(r => r.utilisateur === utilisateur.email);
+          console.log('✅ Réservations récupérées :', this.reservations);
+        },
+        error: (err) => console.error('❌ Erreur récupération réservations :', err)
+      });
     }
   }
 
-  chargerReservations(): void {
-    const allReservationsStr = localStorage.getItem('reservations');
-    if (allReservationsStr) {
-      const allReservations = JSON.parse(allReservationsStr);
-      this.reservations = allReservations.filter(
-        (r: any) => r.utilisateur === this.utilisateur.email
-      );
+  supprimerReservation(id: string) {
+  if (confirm('Confirmer la suppression de cette réservation ?')) {
+    this.reservationService.supprimerReservation(id).subscribe({
+      next: () => {
+        console.log(`✅ Réservation ${id} supprimée.`);
+        // Met à jour la liste localement
+        this.reservations = this.reservations.filter(r => r._id !== id);
+      },
+      error: (err) => {
+        console.error('❌ Erreur lors de la suppression :', err);
+      }
+    });
     }
   }
-
-  estExpiree(dateJour: string): boolean {
-    return new Date(dateJour) < new Date();
-  }
-
-  soumettreAvis(): void {
-  const nouvelAvis = {
-    filmId: this.filmANoter.film.id,
-    utilisateur: this.utilisateur.email,
-    note: this.note,
-    commentaire: this.commentaire,
-    valide: false // par défaut, pas encore validé
-  };
-
-  const avisStr = localStorage.getItem('avis');
-  const avis = avisStr ? JSON.parse(avisStr) : [];
-
-  avis.push(nouvelAvis);
-  localStorage.setItem('avis', JSON.stringify(avis));
-
-  alert('✅ Votre avis a bien été soumis. Il sera validé par un employé.');
-  this.filmANoter = null;
-  this.note = 5;
-  this.commentaire = '';
-}
 
 }

@@ -3,11 +3,15 @@ const mongoose = require('mongoose');
 const cors = require('cors');
 const path = require('path');
 require('dotenv').config();
-const utilisateurRoutes = require('./routes/utilisateur.routes');
-const filmRoutes = require('./routes/film.routes');
 const app = express();
 const PORT = process.env.PORT || 3000;
+const utilisateurRoutes = require('./routes/utilisateur.routes');
+const filmRoutes = require('./routes/film.routes');
 const avisRoutes = require('./routes/avis.routes');
+const seanceRoutes = require('./routes/seance.routes');
+const reservationRoutes = require('./routes/reservation.routes');
+const salleRoutes = require('./routes/salle.routes');
+
 
 // Middlewares
 app.use(cors());
@@ -20,6 +24,10 @@ app.use('/affiches', express.static(path.join(__dirname, 'public/affiches')));
 app.use('/api/users', utilisateurRoutes);
 app.use('/api/films', filmRoutes);
 app.use('/api/avis', avisRoutes);
+app.use('/api/seances', seanceRoutes);
+app.use('/api/reservations', reservationRoutes);
+app.use('/api/salles', salleRoutes);
+
 
 // Serve Angular static files (from dist/)
 app.use(express.static(path.join(__dirname, 'dist/cinephoria-web/browser')));
@@ -30,10 +38,7 @@ app.get(/^\/(?!api).*/, (req, res) => {
 });
 
 // MongoDB connection
-mongoose.connect(process.env.MONGO_URI, {
-  useNewUrlParser: true,
-  useUnifiedTopology: true
-})
+mongoose.connect(process.env.MONGO_URI)
 .then(() => console.log('✅ Connecté à MongoDB'))
 .catch(err => console.error('❌ Erreur MongoDB :', err));
 
@@ -42,5 +47,3 @@ app.listen(PORT, () => {
   console.log(`🚀 Serveur démarré sur http://localhost:${PORT}`);
 });
 
-//const reservationRoutes = require('./routes/reservation.routes');
-// app.use('/api/reservations', reservationRoutes);
