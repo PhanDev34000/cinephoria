@@ -15,6 +15,7 @@ import { ActivatedRoute } from '@angular/router';
 export class LoginComponent {
   form: FormGroup;
   erreur: string = '';
+  messageConnexion: string = '';
 
   constructor(private fb: FormBuilder, private router: Router, private route: ActivatedRoute) {
     this.form = this.fb.group({
@@ -40,13 +41,18 @@ export class LoginComponent {
    if (user) {
      localStorage.setItem('utilisateur', JSON.stringify(user));
 
-   if (localStorage.getItem('resetRequired') === 'true') {
-      localStorage.removeItem('resetRequired');
-      this.router.navigate(['/reset-password']);
-    } else {
-      const redirect = this.route.snapshot.queryParamMap.get('redirectTo');
-      this.router.navigate([redirect || '/']);
-    }
+   this.messageConnexion = '✅ Connexion réussie !';
+
+    setTimeout(() => {
+      if (localStorage.getItem('resetRequired') === 'true') {
+        localStorage.removeItem('resetRequired');
+        this.router.navigate(['/reset-password']);
+      } else {
+        const redirect = this.route.snapshot.queryParamMap.get('redirectTo');
+        this.router.navigate([redirect || '/']);
+      }
+    }, 3500); 
+
     } else {
       this.erreur = 'Identifiants incorrects.';
     }

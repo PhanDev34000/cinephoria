@@ -21,9 +21,13 @@
     <div class="text-danger mb-3" *ngIf="erreur">{{ erreur }}</div>
 
     <button type="submit" class="btn btn-primary">Se connecter</button>
+
+    <div *ngIf="messageConnexion" class="alert alert-success mt-3">
+      {{ messageConnexion }}
+    </div>
+
     <div class="mt-3">
         <a routerLink="/forgot-password">Mot de passe oublié ?</a>
     </div>
-
   </form>
 </div>

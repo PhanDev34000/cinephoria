@@ -5,6 +5,7 @@ export const FILMS: Film[] = [
     id: 1,
     titre: 'La Forêt Oubliée',
     description: 'Une aventure écologique pleine de mystères.',
+     affiche: 'public/affiches/foret.PNG',
     dateDebut: '2025-05-07',
     dateFin: '2025-06-31',
     ageMinimum: 10,
@@ -40,6 +41,7 @@ export const FILMS: Film[] = [
     id: 2,
     titre: 'Inception',
     description: 'Un thriller de science-fiction réalisé par Christopher Nolan.',
+    affiche: 'public/affiches/inception.PNG',
     dateDebut: '2025-05-21',
     dateFin: '2025-06-31',
     ageMinimum: 13,
@@ -65,7 +67,8 @@ export const FILMS: Film[] = [
     id: 3,
     titre: 'Le pére Noël est une ordure',
     description: 'Un reveillon de Noël qui tourne mal !',
-    dateDebut: '2025-05-21',
+    affiche: 'public/affiches/noel.PNG',
+    dateDebut: '2025-05-28',
     dateFin: '2025-06-31',
     ageMinimum: 12,
     coupDeCoeur: true,
@@ -76,7 +79,7 @@ export const FILMS: Film[] = [
     seances: [
       {
         id: 301,
-        jour: '2025-05-21',
+        jour: '2025-05-28',
         debut: '21:00',
         fin: '23:30',
         qualite: 'IMAX',
@@ -86,7 +89,7 @@ export const FILMS: Film[] = [
       },
       {
         id: 302,
-        jour: '2025-05-21',
+        jour: '2025-05-28',
         debut: '21:00',
         fin: '23:30',
         qualite: 'IMAX',
@@ -96,7 +99,7 @@ export const FILMS: Film[] = [
       },
       {
         id: 303,
-        jour: '2025-05-21',
+        jour: '2025-05-28',
         debut: '21:00',
         fin: '23:30',
         qualite: 'IMAX',
@@ -110,7 +113,8 @@ export const FILMS: Film[] = [
     id: 4,
     titre: 'Le parrain 1',
     description: 'Un film mythique retraçant l histoire de la famille Corleone, parrain de la mafia New Yorkaise',
-    dateDebut: '2025-05-21',
+    affiche: 'public/affiches/parrain.PNG',
+    dateDebut: '2025-05-28',
     dateFin: '2025-06-31',
     ageMinimum: 13,
     coupDeCoeur: true,
@@ -121,7 +125,7 @@ export const FILMS: Film[] = [
     seances: [
       {
         id: 201,
-        jour: '2025-05-21',
+        jour: '2025-05-28',
         debut: '17:30',
         fin: '19:30',
         qualite: '4K',
