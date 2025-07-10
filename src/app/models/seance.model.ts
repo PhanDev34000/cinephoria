@@ -1,5 +1,5 @@
 export interface Seance {
-  id: number;
+  _id?: string;
   jour: string;
   debut: string;
   fin: string;
@@ -7,5 +7,5 @@ export interface Seance {
   prix: number;
   cinema: string;
   placesDisponibles: number;
+  filmId: string;
 }
-

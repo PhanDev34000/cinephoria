@@ -10,17 +10,24 @@ export class ReservationService {
 
   constructor(private http: HttpClient) {}
 
-  getReservations(): Observable<any[]> {
-    return this.http.get<any[]>(this.apiUrl);
-  }
-
   ajouterReservation(reservation: any): Observable<any> {
-  return this.http.post(`${this.apiUrl}`, reservation);
+    return this.http.post(this.apiUrl, reservation);
   }
 
-  supprimerReservation(id: string) {
-  return this.http.delete(`http://localhost:3000/api/reservations/${id}`);
+  getReservations(): Observable<any[]> {
+  return this.http.get<any[]>('http://localhost:3000/api/reservations');
   }
 
+  getReservationsByUser(email: string): Observable<any[]> {
+    return this.http.get<any[]>(`${this.apiUrl}?email=${email}`);
+  }
+
+  supprimerReservation(id: string): Observable<any> {
+    return this.http.delete(`${this.apiUrl}/${id}`);
+  }
+
+  getReservationsParEmail(email: string) {
+  return this.http.get<any[]>(`http://localhost:3000/api/reservations?email=${email}`);
+}
 
 }

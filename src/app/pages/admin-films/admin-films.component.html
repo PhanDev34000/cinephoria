@@ -1,47 +1,40 @@
 <div class="container mt-4">
   <h3>🎬 Gestion des films</h3>
 
-  <h5 class="mt-4">🎬 Liste des films</h5>
-      <ul class="list-group mb-4">
-        <li *ngFor="let film of films" class="list-group-item d-flex justify-content-between align-items-center">
-          <div>
-            <strong>{{ film.titre }}</strong> — {{ film.ageMinimum }} ans — ⭐ {{ film.note }}
-          </div>
-          <div>
-            <button class="btn btn-sm btn-warning me-2" (click)="modifierFilm(film.id)">✏️</button>
-            <button class="btn btn-sm btn-danger" (click)="supprimerFilm(film.id)">🗑️</button>
-          </div>
-        </li>
-      </ul>
+   <!-- Bouton pour déclencher l'ajout -->
+  <button class="btn btn-primary mb-3" (click)="filmEnCours = {}">➕ Ajouter un film</button>
 
+  <!-- Formulaire de création / modification -->
 
-  <form *ngIf="filmEnCours" (ngSubmit)="filmEnCours?.id ? enregistrerModification() : ajouterFilm()" class="mb-4">
+  <form *ngIf="filmEnCours" (ngSubmit)="filmEnCours && filmEnCours._id ? enregistrerModification() : ajouterFilm()" class="mb-4">
     <div class="row">
       <div class="col-md-6">
         <input class="form-control mb-2" [(ngModel)]="filmEnCours.titre" name="titre" placeholder="Titre du film" required />
         <input class="form-control mb-2" [(ngModel)]="filmEnCours.imageUrl" name="imageUrl" placeholder="URL de l'affiche" />
-        <input class="form-control mb-2" [(ngModel)]="filmEnCours.ageMinimum" name="age" type="number" placeholder="Âge minimum" />
+        <input class="form-control mb-2" [(ngModel)]="filmEnCours.ageMinimum" name="ageMinimum" type="number" placeholder="Âge minimum" />
       </div>
       <div class="col-md-6">
         <input class="form-control mb-2" [(ngModel)]="filmEnCours.genre" name="genre" placeholder="Genre" />
-        <textarea class="form-control mb-2" [(ngModel)]="filmEnCours.description" name="desc" placeholder="Description"></textarea>
-        <button class="btn btn-success w-100" type="submit">➕ Ajouter un film</button>
+        <textarea class="form-control mb-2" [(ngModel)]="filmEnCours.description" name="description" placeholder="Description"></textarea>
+        <button class="btn btn-success w-100" type="submit">
+          {{ filmEnCours?._id ? '💾 Enregistrer les modifications' : '➕ Ajouter un film' }}
+        </button>
       </div>
     </div>
   </form>
 
-  <ul class="list-group">
-    <li class="list-group-item d-flex justify-content-between align-items-center"
-        *ngFor="let film of films">
-      <div>
-        <strong>{{ film.titre }}</strong> ({{ film.genre }}) - {{ film.ageMinimum }} ans
-      </div>
-       <button class="btn btn-sm btn-warning me-2" (click)="modifierFilm(film.id)">✏️</button>
-       <button class="btn btn-success mt-2">
-          {{ filmEnCours?.id ? '💾 Enregistrer les modifications' : '➕ Ajouter le film' }}
-       </button>
+  <!-- Liste des films -->
 
-      <button class="btn btn-sm btn-danger" (click)="supprimerFilm(film.id)">🗑️ Supprimer</button>
+  <h5 class="mt-4">🎬 Liste des films</h5>
+  <ul class="list-group mb-4">
+    <li *ngFor="let film of films" class="list-group-item d-flex justify-content-between align-items-center">
+      <div>
+        <strong>{{ film.titre }}</strong> — {{ film.ageMinimum }} ans — ⭐ {{ film.note || 0 }}
+      </div>
+      <div>
+        <button class="btn btn-sm btn-warning me-2" (click)="modifierFilm(film._id!)">✏️</button>
+        <button class="btn btn-sm btn-danger" (click)="supprimerFilm(film._id!)">🗑️</button>
+      </div>
     </li>
   </ul>
 </div>

@@ -1,6 +1,7 @@
 export interface Salle {
-  id: number;
+  _id?: string;
+  ville: string;
   nom: string;
   capacite: number;
-  qualite: string;
+  qualiteProjection: string;
 }

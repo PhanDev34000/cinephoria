@@ -1,0 +1,38 @@
+<div class="container mt-4">
+  <h3>Laisser un avis</h3>
+
+  <form [formGroup]="form" (ngSubmit)="onSubmit()">
+    
+    <!-- Sélecteur de film -->
+    <div class="mb-3">
+      <label for="film">Film</label>
+      <select formControlName="filmId" class="form-control" id="film">
+        <option [ngValue]="null" disabled>Choisissez un film</option>
+        <option *ngFor="let film of films" [value]="film._id">{{ film.titre }}</option>
+      </select>
+      <div class="text-danger" *ngIf="f['filmId'].invalid && f['filmId'].touched">
+        Film requis.
+      </div>
+    </div>
+
+    <!-- Note -->
+    <div class="mb-3">
+      <label for="note">Note (1 à 5)</label>
+      <input type="number" id="note" class="form-control" formControlName="note" min="1" max="5" />
+      <div class="text-danger" *ngIf="f['note'].invalid && f['note'].touched">
+        La note doit être comprise entre 1 et 5.
+      </div>
+    </div>
+
+    <!-- Commentaire -->
+    <div class="mb-3">
+      <label for="commentaire">Commentaire</label>
+      <textarea id="commentaire" class="form-control" formControlName="commentaire" rows="4"></textarea>
+      <div class="text-danger" *ngIf="f['commentaire'].invalid && f['commentaire'].touched">
+        Commentaire requis.
+      </div>
+    </div>
+
+    <button type="submit" class="btn btn-primary" [disabled]="form.invalid">Envoyer l’avis</button>
+  </form>
+</div>

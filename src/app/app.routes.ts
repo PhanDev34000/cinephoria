@@ -1,4 +1,8 @@
 import { Routes } from '@angular/router';
+import { AdminGuard } from './guards/admin.guard';
+import { authRoleGuard } from './guards/role.guard';
+import { authUtilisateurGuard } from './guards/auth-utilisateur.guard';
+
 
 
 export const appRoutes: Routes = [
@@ -24,14 +28,16 @@ export const appRoutes: Routes = [
   },
   {
     path: 'mon-espace',
+    canActivate: [authUtilisateurGuard],
     loadComponent: () =>
       import('./pages/mon-espace/mon-espace.component').then(m => m.MonEspaceComponent)
   },
   {
-    path: 'administration',
-    loadComponent: () =>
-      import('./pages/administration/administration.component').then(m => m.AdministrationComponent)
-  },
+  path: 'administration',
+  canActivate: [AdminGuard],
+  loadComponent: () =>
+    import('./pages/administration/administration.component').then(m => m.AdministrationComponent)
+},
   {
   path: 'register',
   loadComponent: () =>
@@ -53,28 +59,42 @@ export const appRoutes: Routes = [
     import('./pages/reset-password/reset-password.component').then(m => m.ResetPasswordComponent)
   },
   {
-  path: 'admin-films',
+  path: 'admin/films',
   loadComponent: () =>
     import('./pages/admin-films/admin-films.component').then(m => m.AdminFilmsComponent)
   },
   {
-  path: 'admin-seances',
+  path: 'admin/seances',
   loadComponent: () =>
     import('./pages/admin-seances/admin-seances.component').then(m => m.AdminSeancesComponent)
   },
   {
-  path: 'admin-salles',
+  path: 'admin/salles',
   loadComponent: () =>
     import('./pages/admin-salles/admin-salles.component').then(m => m.AdminSallesComponent) 
   },
-   {
-  path: 'intranet-avis',
+  {
+  path: 'laisser-avis',
   loadComponent: () =>
-    import('./pages/employe-avis/employe-avis.component').then(m => m.EmployeAvisComponent) 
-  }
-  
+    import('./avis-form/avis-form.component').then(m => m.AvisFormComponent),
+  canActivate: [authUtilisateurGuard] 
+  },
+  {
+  path: 'admin-avis',
+  canActivate: [authRoleGuard],
+  loadComponent: () =>
+    import('./admin/pages/admin-avis/admin-avis.component').then(m => m.AdminAvisComponent)
+},
 
-
-
+  {
+  path: 'admin/employes',
+  canActivate: [AdminGuard],
+  loadComponent: () => import('./pages/admin-employes/admin-employes.component').then(m => m.AdminEmployesComponent),
+  },
+  {
+  path: 'admin/stats',
+  canActivate: [AdminGuard],
+  loadComponent: () => import('./pages/admin-stats/admin-stats.component').then(m => m.AdminStatsComponent),
+},
 ];
 

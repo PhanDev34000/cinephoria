@@ -1,24 +1,38 @@
 <div class="container mt-5">
-  <h2>🎟️ Mes réservations</h2>
+  <h2 class="text-center mb-4">🎟️ Mes réservations</h2>
 
-  <div *ngIf="reservations.length === 0" class="alert alert-warning">
+  <div *ngIf="reservations.length === 0" class="alert alert-warning text-center">
     Aucune réservation trouvée.
   </div>
 
-  <div *ngFor="let reservation of reservations">
-    <img
-      [src]="reservation.film.imageUrl"
-      [alt]="reservation.film.titre"
-      width="150"
-      height="200"
-    />
-    <h3>{{ reservation.film.titre }}</h3>
-      <p>📅 {{ reservation.seance.jour }} — {{ reservation.seance.debut }} ({{ reservation.seance.qualite }})</p>
-      <p>🎥 Cinéma : {{ reservation.seance.cinema }}</p>
-      <p>🎫 Places : {{ reservation.nbPlaces }}</p>
-      <p>💰 Total : {{ reservation.nbPlaces * reservation.seance.prix }} €</p>
-      <button (click)="supprimerReservation(reservation._id)" class="btn btn-danger btn-sm mt-2">
-        ❌ Annuler
-      </button>
+  <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
+    <div class="col" *ngFor="let reservation of reservations">
+      <div class="card h-100">
+        <img
+          [src]="reservation.film.imageUrl || 'assets/affiches/default.png'"
+          [alt]="reservation.film.titre"
+          class="card-img-top mt-2 px-2"
+          style="object-fit: contain; height: 300px;"
+        />
+
+        <div class="card-body text-center">
+          <h5 class="card-title">{{ reservation.film.titre }}</h5>
+          <p class="card-text">
+            📅 {{ reservation.seance.jour }} — {{ reservation.seance.debut }} ({{ reservation.seance.qualite }})<br />
+            🎥 Cinéma : {{ reservation.seance.cinema }}<br />
+            🎫 Places : {{ reservation.nbPlaces }}<br />
+            💰 Total : {{ reservation.nbPlaces * reservation.seance.prix }} €
+          </p>
+        </div>
+
+        <div class="card-footer text-center" style="background-color: #2A48D4;">
+          <button style="background-color: #FFF8DC; color: black;"
+            (click)="supprimerReservation(reservation._id)"
+            class="btn btn-custom">
+            ❌ Annuler
+          </button>
+        </div>
+      </div>
+    </div>
   </div>
 </div>

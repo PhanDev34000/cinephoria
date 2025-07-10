@@ -1,23 +1,22 @@
 import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
+import { HttpClient, HttpClientModule } from '@angular/common/http';
 import { Router } from '@angular/router';
-import { ActivatedRoute } from '@angular/router';
 
 
 @Component({
   selector: 'app-login',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule],
+  imports: [CommonModule, ReactiveFormsModule, HttpClientModule],
   templateUrl: './login.component.html',
   styleUrls: ['./login.component.css']
 })
 export class LoginComponent {
   form: FormGroup;
-  erreur: string = '';
-  messageConnexion: string = '';
+  message: string = '';
 
-  constructor(private fb: FormBuilder, private router: Router, private route: ActivatedRoute) {
+  constructor(private fb: FormBuilder, private http: HttpClient, private router: Router) {
     this.form = this.fb.group({
       email: ['', [Validators.required, Validators.email]],
       password: ['', Validators.required]
@@ -25,38 +24,30 @@ export class LoginComponent {
   }
 
   onSubmit(): void {
-    const { email, password } = this.form.value;
-    
-    // Simulation des utilisateurs
-    const utilisateurs = [
-      { email: 'user@cinephoria.fr', password: 'User123!', role: 'utilisateur' },
-      { email: 'employe@cinephoria.fr', password: 'Employe123!', role: 'employe' },
-      { email: 'admin@cinephoria.fr', password: 'Admin123!', role: 'admin' }
-    ];
+  this.form.markAllAsTouched();
 
-    const user = utilisateurs.find(
-      u => u.email === email && u.password === password
-    );
+  if (this.form.valid) {
+    this.http.post('http://localhost:3000/api/utilisateurs/login', this.form.value).subscribe({
+      next: (res: any) => {
+        localStorage.setItem('token', res.token);
+        localStorage.setItem('utilisateur', JSON.stringify(res.utilisateur));
 
-   if (user) {
-     localStorage.setItem('utilisateur', JSON.stringify(user));
+        // ✅ Affiche le message avant redirection
+        this.message = 'Connexion réussie. Redirection en cours...';
 
-   this.messageConnexion = '✅ Connexion réussie !';
-
-    setTimeout(() => {
-      if (localStorage.getItem('resetRequired') === 'true') {
-        localStorage.removeItem('resetRequired');
-        this.router.navigate(['/reset-password']);
-      } else {
-        const redirect = this.route.snapshot.queryParamMap.get('redirectTo');
-        this.router.navigate([redirect || '/']);
+        // ✅ Attend un peu pour laisser le temps au message d’apparaître
+        setTimeout(() => {
+          window.location.href = '/';  // ✅ Recharge la page (donc HeaderComponent)
+        }, 1500);
+      },
+      error: (err) => {
+        console.error('❌ Échec de connexion :', err);
+        this.message = 'Email ou mot de passe incorrect.';
       }
-    }, 3500); 
-
-    } else {
-      this.erreur = 'Identifiants incorrects.';
-    }
+    });
   }
+}
+
 
   get f() {
     return this.form.controls;

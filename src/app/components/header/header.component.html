@@ -8,13 +8,43 @@
     </button>
     <div class="collapse navbar-collapse" id="navbarNav">
       <ul class="navbar-nav ms-auto">
+
         <li class="nav-item"><a class="nav-link" routerLink="/">Accueil</a></li>
-        <li class="nav-item"><a class="nav-link" routerLink="/reservation">Réservation</a></li>
         <li class="nav-item"><a class="nav-link" routerLink="/films">Films</a></li>
         <li class="nav-item"><a class="nav-link" routerLink="/contact">Contact</a></li>
-        <li class="nav-item"><a class="nav-link" routerLink="/login">Se connecter</a></li>
-        <li class="nav-item"><a class="nav-link" routerLink="/mon-espace">Mon espace</a></li>
-        <li class="nav-item"><a class="nav-link" routerLink="/register">Créer un compte</a></li>
+
+        <!-- Lien commun à tous les rôles connectés -->
+        <li *ngIf="role === 'utilisateur'" class="nav-item">
+          <a class="nav-link" routerLink="/reservation">Réservation</a>
+        </li>
+        <li *ngIf="role === 'utilisateur'" class="nav-item">
+          <a class="nav-link" routerLink="/mon-espace">Mon espace</a>
+        </li>
+        <li *ngIf="role === 'utilisateur'" class="nav-item">
+          <a class="nav-link" routerLink="/laisser-avis">Laisser un avis</a>
+        </li>
+
+        <li *ngIf="role === 'employe' || role === 'admin'" class="nav-item">
+          <a class="nav-link" routerLink="/admin-avis">Avis à valider</a>
+        </li>
+
+        <li *ngIf="role === 'admin'" class="nav-item">
+          <a class="nav-link" routerLink="/administration">Administration</a>
+        </li>
+
+        <!-- Lien pour utilisateurs non connectés -->
+        <li *ngIf="!isLoggedIn" class="nav-item">
+          <a class="nav-link" routerLink="/login">Se connecter</a>
+        </li>
+        <li *ngIf="!isLoggedIn" class="nav-item">
+          <a class="nav-link" routerLink="/register">Créer un compte</a>
+        </li>
+
+        <!-- Bouton de déconnexion -->
+        <li *ngIf="isLoggedIn" class="nav-item">
+          <a class="nav-link" (click)="logout()">Se déconnecter</a>
+        </li>
+
       </ul>
     </div>
   </div>

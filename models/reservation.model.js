@@ -1,9 +1,9 @@
 const mongoose = require('mongoose');
 
 const reservationSchema = new mongoose.Schema({
-  utilisateur: { type: String, required: true }, // ✅ Temporaire
+  utilisateur: { type: String, required: true }, 
   film: {
-  id: { type: Number, required: true },
+  _id: { type: String, required: true },
   titre: { type: String, required: true },
   description: String,
   affiche: String,

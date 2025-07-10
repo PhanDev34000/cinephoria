@@ -1,6 +1,9 @@
 const express = require('express');
 const router = express.Router();
 const Film = require('../models/film.model');
+const { verifyToken } = require('../middlewares/auth.middleware');
+const { verifyAdmin, verifyEmploye } = require('../middlewares/role.middleware');
+
 
 // GET tous les films
 router.get('/', async (req, res) => {

@@ -2,7 +2,7 @@ import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Salle } from '../../models/salle.model';
-import { SALLES } from '../../data/salles.data';
+import { SallesService } from '../../services/salles.service';
 
 @Component({
   selector: 'app-admin-salles',
@@ -12,54 +12,103 @@ import { SALLES } from '../../data/salles.data';
   styleUrls: ['./admin-salles.component.css']
 })
 export class AdminSallesComponent {
-  salleEnCours: any = null;
-
-  salles: Salle[] = [...SALLES]; // copie locale
-  nouvelleSalle: Salle = {
-    id: 0,
+  salleEnCours: any = {
+    _id: null,
     nom: '',
-    capacite: 0,
-    qualite: ''
+    ville: '',
+    capacite: '',
+    qualiteProjection: ''
   };
+
+  salles: Salle[] = [];
+
+  constructor(private sallesService: SallesService) {}
+
+  ngOnInit(): void {
+    this.sallesService.getSalles().subscribe({
+      next: (data) => {
+        this.salles = data;
+      },
+      error: (err) => {
+        console.error('Erreur chargement des salles :', err);
+      }
+    });
+  }
 
   ajouterSalle(): void {
-    const salle = { ...this.nouvelleSalle, id: Date.now() };
-    this.salles.push(salle);
-    this.nouvelleSalle = { id: 0, nom: '', capacite: 0, qualite: '' };
-    alert('Salle ajoutée ✅');
+    const salle = {
+      nom: this.salleEnCours.nom,
+      ville: this.salleEnCours.ville,
+      capacite: Number(this.salleEnCours.capacite),
+      qualiteProjection: this.salleEnCours.qualiteProjection
+    };
 
-    this.salleEnCours = {
-      id: 0,
-      nom: '',
-      capacite: 0,
-      qualite: ''
-  };
-
+    this.sallesService.ajouterSalle(salle).subscribe({
+      next: (savedSalle) => {
+        console.log('✅ Salle enregistrée :', savedSalle);
+        this.salles.push(savedSalle);
+        alert('Salle ajoutée ✅');
+        this.resetForm();
+      },
+      error: (err) => {
+        console.error('❌ Erreur API :', err);
+        alert('Erreur lors de l’enregistrement');
+      }
+    });
   }
 
-  supprimerSalle(id: number): void {
-    this.salles = this.salles.filter(s => s.id !== id);
-    alert('Salle supprimée ❌');
-  }
-
- modifierSalle(id: number) {
-  const salle = this.salles.find(s => s.id === id);
-  if (salle) {
+  modifierSalle(salle: Salle): void {
     this.salleEnCours = { ...salle };
   }
+
+  enregistrerModification(): void {
+  if (!this.salleEnCours || !this.salleEnCours._id) return;
+
+  const salleModifiee: Salle = {
+    _id: this.salleEnCours._id,
+    nom: this.salleEnCours.nom,
+    ville: this.salleEnCours.ville,
+    capacite: Number(this.salleEnCours.capacite),
+    qualiteProjection: this.salleEnCours.qualite
+  };
+
+  this.sallesService.modifierSalle(salleModifiee._id!, salleModifiee).subscribe({
+    next: (updatedSalle) => {
+      const index = this.salles.findIndex(s => s._id === updatedSalle._id);
+      if (index !== -1) this.salles[index] = updatedSalle;
+
+      alert('🏟️ Salle modifiée dans la base de données ✅');
+      this.resetForm();
+    },
+    error: (err) => {
+      console.error('❌ Erreur mise à jour salle :', err);
+      alert('Erreur lors de la modification');
+    }
+  });
 }
 
-  enregistrerModification() {
-  const index = this.salles.findIndex(s => s.id === this.salleEnCours.id);
-  if (index !== -1) {
-    this.salles[index] = {
-      ...this.salleEnCours,
-      capacite: Number(this.salleEnCours.capacite)
+
+  supprimerSalle(id: string): void {
+  this.sallesService.supprimerSalle(id).subscribe({
+    next: () => {
+      this.salles = this.salles.filter(s => s._id !== id);
+      alert('Salle supprimée ✅');
+    },
+    error: (err) => {
+      console.error('❌ Erreur suppression :', err);
+      alert("Erreur lors de la suppression");
+    }
+  });
+}
+
+
+  resetForm(): void {
+    this.salleEnCours = {
+      _id: null,
+      nom: '',
+      ville: '',
+      capacite: '',
+      qualiteProjection: ''
     };
-    alert('🏟️ Salle modifiée');
-    this.salleEnCours = null;
   }
-  }
-
-
 }

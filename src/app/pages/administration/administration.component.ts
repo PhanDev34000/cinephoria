@@ -17,10 +17,10 @@ export class AdministrationComponent {
 
   ngOnInit(): void {
   const user = JSON.parse(localStorage.getItem('utilisateur') || '{}');
-  if (user.role !== 'admin') {
-    alert('⛔ Accès réservé à l’administrateur.');
-    this.router.navigate(['/']);
-}
+ // if (user.role !== 'admin')  {
+  //  alert('⛔ Accès réservé à l’administrateur.');
+  //  this.router.navigate(['/']);
+// }
 
   }}
 

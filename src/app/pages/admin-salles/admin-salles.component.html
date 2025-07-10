@@ -3,27 +3,37 @@
 
   <ul class="list-group mb-4">
     <li *ngFor="let salle of salles" class="list-group-item d-flex justify-content-between align-items-center">
-      {{ salle.nom }} — {{ salle.capacite }} places — {{ salle.qualite }}
-      <button class="btn btn-sm btn-warning me-2" (click)="modifierSalle(salle.id)">✏️</button>
-      <button class="btn btn-sm btn-danger" (click)="supprimerSalle(salle.id)">🗑️</button>
+      {{ salle.ville }} — {{ salle.nom }} — {{ salle.capacite }} places — {{ salle.qualiteProjection }}
+      <button class="btn btn-sm btn-warning me-2" (click)="modifierSalle(salle)">✏️</button>
+      <button class="btn btn-sm btn-danger" (click)="supprimerSalle(salle._id!)">🗑️</button>
     </li>
   </ul>
 
-  <form (ngSubmit)="salleEnCours?.id ? enregistrerModification() : ajouterSalle()">
+  <form (ngSubmit)="salleEnCours?._id ? enregistrerModification() : ajouterSalle()">
     <div class="row">
+      <div class="col-md-6 mb-2">
+        <input class="form-control" type="text" placeholder="Ville" [(ngModel)]="salleEnCours.ville" name="ville" required/>
+      </div>
       <div class="col-md-4 mb-2">
         <input class="form-control" placeholder="Nom de la salle" [(ngModel)]="salleEnCours.nom" name="nom" required />
       </div>
       <div class="col-md-4 mb-2">
-        <input class="form-control" type="number" placeholder="Capacité" [(ngModel)]="salleEnCours.capacite" name="capacite" required />
+        <input class="form-control" type="text" placeholder="Capacité" [(ngModel)]="salleEnCours.capacite" name="capacite" required />
       </div>
       <div class="col-md-4 mb-2">
-        <input class="form-control" placeholder="Qualité (4K, 3D...)" [(ngModel)]="salleEnCours.qualite" name="qualite" required />
+        <input class="form-control" placeholder="Qualité (4K, 3D...)" [(ngModel)]="salleEnCours.qualiteProjection" name="qualiteProjection" required />
       </div>
     </div>
-    <button class="btn btn-success mt-2">
-      {{ salleEnCours?.id ? '💾 Enregistrer les modifications' : '➕ Ajouter la salle' }}
-    </button>
+    <!-- BOUTON AJOUTER : visible seulement si on est en mode création -->
+      <button *ngIf="!salleEnCours._id" type="submit" class="btn btn-success mt-2">
+        ➕ Ajouter la salle
+      </button>
+
+      <!-- BOUTON MODIFIER : visible seulement si on est en mode édition -->
+      <button *ngIf="salleEnCours._id" type="submit" class="btn btn-primary mt-2" style="background-color: #FFF8DC; color: black;">
+        💾 Enregistrer les modifications
+      </button>
+
 
   </form>
 </div>

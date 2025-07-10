@@ -1,0 +1,33 @@
+<div class="container mt-4">
+  <h2>Validation des avis</h2>
+
+  <div *ngIf="message" class="alert alert-info my-3">{{ message }}</div>
+
+  <div *ngIf="avisNonValides.length === 0" class="alert alert-secondary">
+    Aucun avis en attente de validation.
+  </div>
+
+  <table *ngIf="avisNonValides.length > 0" class="table table-bordered table-striped mt-3">
+    <thead>
+      <tr>
+        <th>Film ID</th>
+        <th>Utilisateur ID</th>
+        <th>Note</th>
+        <th>Commentaire</th>
+        <th>Actions</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let avis of avisNonValides">
+        <td>{{ getTitreFilm(avis.filmId) }}</td>
+        <td>{{ avis.utilisateurId }}</td>
+        <td>{{ avis.note }}</td>
+        <td>{{ avis.commentaire }}</td>
+        <td>
+          <button class="btn btn-success btn-sm me-2" (click)="validerAvis(avis._id)">Valider</button>
+          <button class="btn btn-danger btn-sm" (click)="supprimerAvis(avis._id)">Supprimer</button>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+</div>

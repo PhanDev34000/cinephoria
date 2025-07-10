@@ -1,11 +1,22 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router';
 import { Film } from '../../models/film.model';
 import { FilmService } from '../../services/film.service';
+import { AvisService } from '../../services/avis.service';
 import { HttpClientModule } from '@angular/common/http';
+
+interface Avis {
+  _id: string;
+  filmId: string;
+  utilisateurId: string;
+  commentaire: string;
+  note: number;
+  valide: boolean;
+  date: string;
+}
 
 @Component({
   selector: 'app-films',
@@ -14,26 +25,55 @@ import { HttpClientModule } from '@angular/common/http';
   templateUrl: './films.component.html',
   styleUrls: ['./films.component.css']
 })
-export class FilmsComponent {
+export class FilmsComponent implements OnInit {
   films: Film[] = [];
   filmActif: Film | null = null;
+  filmAvisVisible: { [filmId: string]: boolean } = {};
+
 
   // Filtres
   cinemaFiltre: string = '';
   genreFiltre: string = '';
   jourFiltre: string = '';
 
-  constructor(private router: Router, private filmService: FilmService) {}
+  // Avis stockés par film
+  avisParFilm: { [filmId: string]: Avis[] } = {};
+
+  constructor(
+    private router: Router,
+    private filmService: FilmService,
+    private avisService: AvisService
+  ) {}
 
   ngOnInit(): void {
     this.filmService.getFilms().subscribe({
       next: (data) => {
         console.log('✅ Films chargés depuis l’API :', data);
         this.films = data;
+        this.chargerTousLesAvis();
       },
       error: (err) => console.error('Erreur chargement films :', err)
     });
   }
+
+  chargerTousLesAvis(): void {
+    this.films.forEach((film) => {
+      this.avisService.getAvisValidésParFilm(film._id!).subscribe({
+        next: (avis) => {
+          this.avisParFilm[film._id!] = avis;
+        },
+        error: (err) => {
+          console.error(`Erreur chargement avis du film ${film._id} :`, err);
+        }
+      });
+    });
+  }
+
+  getAvisPourFilm(film: Film): Avis[] {
+    const id = film._id;
+    return id && this.avisParFilm[id] ? this.avisParFilm[id] : [];
+  }
+
 
   get cinemas(): string[] {
     return [...new Set(this.films.flatMap(f => f.cinemas))];
@@ -74,7 +114,7 @@ export class FilmsComponent {
   allerReservation(film: Film, seance: any): void {
     this.router.navigate(['/reservation'], {
       queryParams: {
-        filmId: film.id,
+        filmId: film._id,
         cinema: seance.cinema,
         jour: seance.jour,
         heure: seance.debut,
@@ -82,4 +122,22 @@ export class FilmsComponent {
       }
     });
   }
+
+  toggleAvis(film: Film): void {
+  const id = film._id!;
+  this.filmAvisVisible[id] = !this.filmAvisVisible[id];
+
+  // Charger les avis uniquement si pas déjà faits
+  if (this.filmAvisVisible[id] && !this.avisParFilm[id]) {
+    this.avisService.getAvisValidésParFilm(id).subscribe({
+      next: (avis) => {
+        this.avisParFilm[id] = avis;
+      },
+      error: (err) => {
+        console.error(`Erreur chargement avis du film ${id} :`, err);
+      }
+    });
+  }
+}
+
 }

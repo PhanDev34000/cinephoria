@@ -2,7 +2,7 @@ import { Seance } from './seance.model';
 
 export interface Film {
   affiche: string;
-  id: number;
+  _id?: string;
   titre: string;
   description: string;
   dateDebut: string;  

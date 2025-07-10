@@ -15,24 +15,31 @@ import { FilmService } from '../../services/film.service';
 
 export class AccueilComponent {
   filmsDuDernierMercredi: Film[] = [];
+  filmsAAffiche: Film[] = [];
 
   constructor(private filmService: FilmService) {}
 
   ngOnInit(): void {
-    const dernierMercredi = this.getDernierMercredi();
+  const dernierMercredi = this.getDernierMercredi();
 
-    this.filmService.getFilms().subscribe({
-      next: (films: Film[]) => {
-        this.filmsDuDernierMercredi = films.filter((film: Film) =>
-          film.seances?.some((seance) => seance.jour === dernierMercredi)
-        );
-        console.log('🎬 Films du mercredi :', this.filmsDuDernierMercredi);
-      },
-      error: (err: any) => {
-        console.error('❌ Erreur chargement des films', err);
-      }
-    });
-  }
+  this.filmService.getFilms().subscribe({
+    next: (films: Film[]) => {
+      // 🔹 Tous les films à l'affiche (aucun filtrage)
+      this.filmsAAffiche = films;
+
+      // 🔹 Films du dernier mercredi (filtrés)
+      this.filmsDuDernierMercredi = films.filter((film: Film) =>
+        film.seances?.some((seance) => seance.jour === dernierMercredi)
+      );
+
+      console.log('🎬 Films du mercredi :', this.filmsDuDernierMercredi);
+    },
+    error: (err: any) => {
+      console.error('❌ Erreur chargement des films', err);
+    }
+  });
+}
+
 
   getDernierMercredi(): string {
     const today = new Date();

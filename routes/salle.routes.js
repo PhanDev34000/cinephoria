@@ -1,6 +1,9 @@
 const express = require('express');
 const router = express.Router();
 const Salle = require('../models/salle.model');
+const { verifyToken } = require('../middlewares/auth.middleware');
+const { verifyAdmin, verifyEmploye } = require('../middlewares/role.middleware');
+
 
 // GET toutes les salles
 router.get('/', async (req, res) => {
@@ -11,13 +14,14 @@ router.get('/', async (req, res) => {
 // POST ajouter une salle
 router.post('/', async (req, res) => {
   try {
-    const salle = new Salle(req.body);
-    await salle.save();
-    res.status(201).json(salle);
+    const nouvelleSalle = new Salle(req.body);
+    await nouvelleSalle.save();
+    res.status(201).json(nouvelleSalle);
   } catch (err) {
     res.status(400).json({ message: err.message });
   }
 });
+
 
 // PUT modifier une salle
 router.put('/:id', async (req, res) => {

@@ -1,12 +1,15 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { ActivatedRoute, Router } from '@angular/router';
+
 import { CINEMAS } from '../../data/cinema.data';
-import { FILMS } from '../../data/films.data';
 import { Film } from '../../models/film.model';
-import { ActivatedRoute } from '@angular/router';
 import { Seance } from '../../models/seance.model';
+
 import { ReservationService } from '../../services/reservation.service';
+import { FilmService } from '../../services/film.service';
+import { SeanceService } from '../../services/seance.service';
 
 @Component({
   selector: 'app-reservation',
@@ -15,27 +18,51 @@ import { ReservationService } from '../../services/reservation.service';
   templateUrl: './reservation.component.html',
   styleUrls: ['./reservation.component.css']
 })
-export class ReservationComponent {
+export class ReservationComponent implements OnInit {
   cinemas = CINEMAS;
-  films = FILMS;
+  films: Film[] = [];
+  toutesLesSeances: Seance[] = [];
+  seancesFiltrees: Seance[] = [];
+
   selectedCinema: string = '';
-  selectedFilmId: number | null = null;
+  selectedFilmId: string | null = null;
   seanceSelectionnee: Seance | null = null;
   nbPlaces: number = 1;
 
-  constructor(private route: ActivatedRoute, private reservationService: ReservationService) {}
+  filmSelectionne: Film | undefined = undefined;
 
-  get filmSelectionne(): Film | null {
-    return this.films.find(f => f.id === this.selectedFilmId) || null;
-  }
-
-  get seancesFiltrees(): Seance[] {
-    return this.filmSelectionne?.seances?.filter(s => s.cinema === this.selectedCinema) || [];
-  }
+  constructor(
+    private route: ActivatedRoute,
+    private router: Router,
+    private reservationService: ReservationService,
+    private filmService: FilmService,
+    private seanceService: SeanceService
+  ) {}
 
   ngOnInit(): void {
+    // Charger les films
+    this.filmService.getFilms().subscribe({
+      next: (films) => {
+        this.films = films;
+        console.log('🎬 Films chargés :', this.films);
+        this.traiterQueryParams();
+      },
+      error: (err) => console.error('❌ Erreur chargement films', err)
+    });
+
+    // Charger les séances
+    this.seanceService.getSeances().subscribe({
+      next: (seances) => {
+        this.toutesLesSeances = seances;
+        console.log('📆 Séances chargées :', this.toutesLesSeances);
+      },
+      error: (err) => console.error('❌ Erreur chargement séances', err)
+    });
+  }
+
+  private traiterQueryParams(): void {
     this.route.queryParams.subscribe(params => {
-      const filmId = +params['filmId'];
+      const filmId = params['filmId'];
       const cinema = params['cinema'];
       const jour = params['jour'];
       const heure = params['heure'];
@@ -45,8 +72,9 @@ export class ReservationComponent {
         this.selectedFilmId = filmId;
         this.selectedCinema = cinema;
 
-        const film = this.films.find(f => f.id === filmId);
+        const film = this.films.find(f => f._id === filmId);
         if (film) {
+          this.filmSelectionne = film;
           const seance = film.seances.find(s =>
             s.cinema === cinema &&
             s.jour === jour &&
@@ -60,7 +88,20 @@ export class ReservationComponent {
   }
 
   afficherSeances(): boolean {
-    return !!(this.selectedCinema && this.filmSelectionne);
+    this.filmSelectionne = this.films.find(f => f._id === this.selectedFilmId);
+
+    if (!this.filmSelectionne || !this.selectedCinema) {
+      this.seancesFiltrees = [];
+      return false;
+    }
+
+    this.seancesFiltrees = this.toutesLesSeances.filter(
+      s => s.filmId === this.filmSelectionne!._id &&
+           s.cinema.toLowerCase().trim() === this.selectedCinema.toLowerCase().trim()
+    );
+
+    console.log('🎯 Séances filtrées :', this.seancesFiltrees);
+    return this.seancesFiltrees.length > 0;
   }
 
   selectionnerSeance(seance: Seance): void {
@@ -68,44 +109,52 @@ export class ReservationComponent {
   }
 
   validerReservation(): void {
-    const utilisateurStr = localStorage.getItem('utilisateur');
-    if (!utilisateurStr) {
-      alert('❌ Vous devez être connecté pour réserver.');
+    const film = this.films.find(f => f._id === this.selectedFilmId);
+    const seance = this.seanceSelectionnee;
+
+    if (!film || !seance) {
+      console.error('❌ Film ou séance manquant');
       return;
     }
-    const utilisateur = JSON.parse(utilisateurStr);
 
-    if (!this.seanceSelectionnee || !this.filmSelectionne) {
-    alert('❌ Veuillez d’abord sélectionner une séance.');
-    return;
-  }
+    // ✅ Décoder le token pour récupérer l'utilisateur
+    const token = localStorage.getItem('token');
+    if (!token) {
+      console.error('❌ Token manquant');
+      return;
+    }
 
-    const nouvelleReservation = {
-      utilisateur: utilisateur._id || utilisateur.email,
-      film: this.filmSelectionne,
+    const payload = JSON.parse(atob(token.split('.')[1]));
+    const utilisateurEmail = payload.email || 'inconnu@cinephoria.fr';
+
+    const reservation = {
+      utilisateur: utilisateurEmail,
+      film: {
+        _id: film._id,
+        titre: film.titre,
+        imageUrl: film.imageUrl
+      },
       seance: {
-        jour: this.seanceSelectionnee.jour,
-        debut: this.seanceSelectionnee.debut,
-        fin: this.seanceSelectionnee.fin,
-        qualite: this.seanceSelectionnee.qualite,
-        cinema: this.seanceSelectionnee.cinema,
-        prix: this.seanceSelectionnee.prix
+        jour: seance.jour,
+        debut: seance.debut,
+        fin: seance.fin,
+        qualite: seance.qualite,
+        cinema: seance.cinema,
+        prix: seance.prix
       },
       nbPlaces: this.nbPlaces
-  };
-console.log('🎯 Payload envoyé :', JSON.stringify(nouvelleReservation, null, 2));
+    };
 
+    console.log('📦 Données envoyées à l’API :', reservation);
 
-    this.reservationService.ajouterReservation(nouvelleReservation).subscribe({
-    next: () => {
-      alert('✅ Réservation confirmée !');
-      this.seanceSelectionnee = null;
-      this.nbPlaces = 1;
-    },
-    error: (err) => {
-      console.error('❌ Erreur depuis l’API :', err);
-      alert('❌ Une erreur est survenue lors de la réservation.');
-    }
-  });
-}
+    this.reservationService.ajouterReservation(reservation).subscribe({
+      next: () => {
+        console.log('✅ Réservation enregistrée');
+        this.router.navigate(['/mon-espace']);
+      },
+      error: (err) => {
+        console.error('❌ Erreur API réservation :', err);
+      }
+    });
+  }
 }

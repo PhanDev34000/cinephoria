@@ -1,5 +1,22 @@
+<div class="container">
+  <h2 class="text-center my-4">🎥 Films à l'affiche</h2>
+  <div class="row justify-content-center">
+    <div class="col-md-4 mb-4" *ngFor="let film of filmsAAffiche">
+      <div class="card h-100">
+        <img [src]="film.imageUrl || 'assets/affiches/default.png'" class="card-img-top" [alt]="film.titre">
+        <div class="card-body text-center">
+          <h5 class="card-title">{{ film.titre }}</h5>
+          <p class="card-text">{{ film.genre }} — Note : {{ film.note }}</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+
 <div class="container mt-5">
-  <h2 class="mb-4">Films ajoutés le dernier mercredi</h2>
+  <h2 class="mb-4" class="text-center my-4">Films ajoutés le dernier mercredi</h2>
   <div class="row">
     <div class="col-md-4 mb-4" *ngFor="let film of filmsDuDernierMercredi">
       <div class="card h-100">
