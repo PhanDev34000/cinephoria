@@ -16,7 +16,7 @@ export class AdminGuard implements CanActivate {
     }
 
     const utilisateur = JSON.parse(utilisateurStr);
-    if (utilisateur.email === 'admin@cinephoria.fr') {
+    if (utilisateur.role === 'admin') {
       return true;
     }
 

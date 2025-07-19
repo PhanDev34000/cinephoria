@@ -2,9 +2,8 @@ const express = require('express');
 const router = express.Router();
 const Reservation = require('../models/reservation.model');
 
-router.post('/', async (req, res) => {
-   console.log('📥 Requête POST reçue /api/reservations'); 
-   console.log('📨 Contenu reçu :', JSON.stringify(req.body, null, 2));
+// POST Ajouter une réservation
+router.post('/', async (req, res) => {   
   try {
     const reservation = new Reservation(req.body);
     await reservation.save();
@@ -18,6 +17,7 @@ router.post('/', async (req, res) => {
   }
 });
 
+//Get Récupérer les réservations
 router.get('/', async (req, res) => {
   try {
     const email = req.query.email;
@@ -33,7 +33,7 @@ router.get('/', async (req, res) => {
   }
 });
 
-
+// DELETE Supprimer une réservation
 router.delete('/:id', async (req, res) => {
   try {
     await Reservation.findByIdAndDelete(req.params.id);

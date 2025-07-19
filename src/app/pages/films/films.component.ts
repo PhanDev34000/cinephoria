@@ -3,10 +3,13 @@ import { Router } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router';
+import { HttpClientModule } from '@angular/common/http';
+import { SallesService } from '../../services/salles.service';
 import { Film } from '../../models/film.model';
 import { FilmService } from '../../services/film.service';
 import { AvisService } from '../../services/avis.service';
-import { HttpClientModule } from '@angular/common/http';
+import { SeanceService } from '../../services/seance.service';
+import { Seance } from '../../models/seance.model';
 
 interface Avis {
   _id: string;
@@ -27,9 +30,9 @@ interface Avis {
 })
 export class FilmsComponent implements OnInit {
   films: Film[] = [];
+  toutesLesSeances: Seance[] = [];
   filmActif: Film | null = null;
   filmAvisVisible: { [filmId: string]: boolean } = {};
-
 
   // Filtres
   cinemaFiltre: string = '';
@@ -42,19 +45,64 @@ export class FilmsComponent implements OnInit {
   constructor(
     private router: Router,
     private filmService: FilmService,
-    private avisService: AvisService
+    private avisService: AvisService,
+    private seanceService: SeanceService,
+    private sallesService: SallesService
   ) {}
 
   ngOnInit(): void {
     this.filmService.getFilms().subscribe({
-      next: (data) => {
-        console.log('✅ Films chargés depuis l’API :', data);
-        this.films = data;
+      next: (films) => {
+        this.films = films;
         this.chargerTousLesAvis();
-      },
+        this.chargerSeancesEtVilles();
+        this.films.forEach(film => {
+        this.avisService.getMoyenneNote(film._id!).subscribe({
+  next: (moyenne) => {    
+    film.note = Math.round(moyenne * 10) / 10; ;
+  },
+  error: (err) => {
+    console.error(`❌ Erreur moyenne ${film.titre}`, err);
+    film.note = 0;
+    }});
+  });
+  },      
       error: (err) => console.error('Erreur chargement films :', err)
     });
   }
+
+  chargerSeancesEtVilles(): void {
+    this.seanceService.getSeances().subscribe({
+      next: (seances) => {
+        this.toutesLesSeances = seances;
+
+    this.films.forEach(film => {
+      film.seances = seances.filter(s => s.filmId === film._id);
+    });
+
+
+        // Charger les salles pour relier salleId → ville
+        this.sallesService.getSalles().subscribe({
+          next: (salles) => {
+            this.films.forEach(film => {
+              const villes = seances
+                .filter(s => s.filmId === film._id)
+                .map(s => {
+                  const salle = salles.find(sa => sa._id === s.salleId);
+                  return salle?.ville?.trim(); // on récupère la ville via la salle
+                })
+                .filter((v): v is string => !!v); // on garde uniquement les valeurs non nulles
+
+              film.villes = [...new Set(villes)];
+            });
+          },
+          error: (err) => console.error('❌ Erreur chargement salles', err)
+        });
+      },
+      error: (err) => console.error('❌ Erreur chargement séances', err)
+    });
+  }
+
 
   chargerTousLesAvis(): void {
     this.films.forEach((film) => {
@@ -74,18 +122,12 @@ export class FilmsComponent implements OnInit {
     return id && this.avisParFilm[id] ? this.avisParFilm[id] : [];
   }
 
-
-  get cinemas(): string[] {
-    return [...new Set(this.films.flatMap(f => f.cinemas))];
-  }
-
   get genres(): string[] {
     return [...new Set(this.films.map(f => f.genre))];
   }
 
   get filmsFiltres(): Film[] {
     return this.films.filter(film => {
-      const correspondCinema = this.cinemaFiltre ? film.cinemas.includes(this.cinemaFiltre) : true;
       const correspondGenre = this.genreFiltre ? film.genre === this.genreFiltre : true;
 
       const correspondJour = this.jourFiltre
@@ -102,20 +144,24 @@ export class FilmsComponent implements OnInit {
           })()
         : true;
 
-      return correspondCinema && correspondGenre && correspondJour;
+      return correspondGenre && correspondJour;
     });
   }
 
+  get cinemas(): string[] {
+  return [...new Set(this.films.flatMap(f => f.villes || []))];
+}
+
+
   toggleSeances(film: Film): void {
     this.filmActif = this.filmActif === film ? null : film;
-    console.log('Film actif :', this.filmActif);
   }
 
   allerReservation(film: Film, seance: any): void {
     this.router.navigate(['/reservation'], {
       queryParams: {
         filmId: film._id,
-        cinema: seance.cinema,
+        cinema: seance.ville, 
         jour: seance.jour,
         heure: seance.debut,
         qualite: seance.qualite
@@ -124,20 +170,18 @@ export class FilmsComponent implements OnInit {
   }
 
   toggleAvis(film: Film): void {
-  const id = film._id!;
-  this.filmAvisVisible[id] = !this.filmAvisVisible[id];
+    const id = film._id!;
+    this.filmAvisVisible[id] = !this.filmAvisVisible[id];
 
-  // Charger les avis uniquement si pas déjà faits
-  if (this.filmAvisVisible[id] && !this.avisParFilm[id]) {
-    this.avisService.getAvisValidésParFilm(id).subscribe({
-      next: (avis) => {
-        this.avisParFilm[id] = avis;
-      },
-      error: (err) => {
-        console.error(`Erreur chargement avis du film ${id} :`, err);
-      }
-    });
+    if (this.filmAvisVisible[id] && !this.avisParFilm[id]) {
+      this.avisService.getAvisValidésParFilm(id).subscribe({
+        next: (avis) => {
+          this.avisParFilm[id] = avis;
+        },
+        error: (err) => {
+          console.error(`Erreur chargement avis du film ${id} :`, err);
+        }
+      });
+    }
   }
-}
-
 }

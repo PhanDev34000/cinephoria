@@ -17,7 +17,7 @@
         <input class="form-control mb-2" [(ngModel)]="filmEnCours.genre" name="genre" placeholder="Genre" />
         <textarea class="form-control mb-2" [(ngModel)]="filmEnCours.description" name="description" placeholder="Description"></textarea>
         <button class="btn btn-success w-100" type="submit">
-          {{ filmEnCours?._id ? '💾 Enregistrer les modifications' : '➕ Ajouter un film' }}
+          {{ filmEnCours._id ? '💾 Enregistrer les modifications' : '➕ Ajouter un film' }}
         </button>
       </div>
     </div>

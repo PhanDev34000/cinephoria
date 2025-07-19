@@ -1,5 +1,9 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { map } from 'rxjs/operators';
+import { Observable } from 'rxjs';
+
+
 
 @Injectable({ providedIn: 'root' })
 export class AvisService {
@@ -17,5 +21,11 @@ export class AvisService {
   getAvisValidésParFilm(filmId: string) {
   return this.http.get<any[]>(`${this.apiUrl}/public?filmId=${filmId}&valide=true`);
   }
+
+  // 🔹 Récupérer la moyenne des notes d’un film
+getMoyenneNote(filmId: string): Observable<number> {
+  return this.http.get<{ moyenne: number }>(`${this.apiUrl}/film/${filmId}/moyenne-note`)
+    .pipe(map(res => res.moyenne));
+}
 
 }

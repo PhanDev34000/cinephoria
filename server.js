@@ -12,14 +12,10 @@ const seanceRoutes = require('./routes/seance.routes');
 const reservationRoutes = require('./routes/reservation.routes');
 const salleRoutes = require('./routes/salle.routes');
 const statsRoutes = require('./routes/stats.routes');
-//const authRoutes = require('./routes/auth.routes');
 
 // Middlewares
 app.use(cors());
 app.use(express.json());
-
-//Authentification
-//app.use('/api/auth', authRoutes);
 
 // Servir les images statiques
 app.use('/affiches', express.static(path.join(__dirname, 'public/affiches')));
@@ -31,7 +27,6 @@ app.use('/api/avis', avisRoutes);
 app.use('/api/seances', seanceRoutes);
 app.use('/api/reservations', reservationRoutes);
 app.use('/api/salles', salleRoutes);
-//app.use('/api/employes', require('./routes/employe.routes'));
 app.use('/api/stats', statsRoutes);
 
 // Serve Angular static files (from dist/)

@@ -52,4 +52,9 @@ export class LoginComponent {
   get f() {
     return this.form.controls;
   }
+
+  goToReset(): void {
+  this.router.navigate(['/forgot-password']);
+}
+
 }

@@ -40,6 +40,11 @@
           <a class="nav-link" routerLink="/register">Créer un compte</a>
         </li>
 
+        <!-- Affiché uniquement pour les employés -->
+        <li *ngIf="role === 'employe'" class="nav-item">
+          <a class="nav-link" routerLink="/employe-dashboard">Administration</a>
+        </li>
+
         <!-- Bouton de déconnexion -->
         <li *ngIf="isLoggedIn" class="nav-item">
           <a class="nav-link" (click)="logout()">Se déconnecter</a>

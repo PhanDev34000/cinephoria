@@ -1,66 +1,57 @@
-<div class="container mt-5">
-  <h2>Réserver une séance</h2>
+<div class="container mt-4">
+  <h3>🎟️ Réserver une séance</h3>
 
-  <!-- Choix du cinéma -->
+  <!-- Choix de la ville -->
   <div class="mb-3">
-    <label for="cinema">Choisissez un cinéma :</label>
-    <select id="cinema" class="form-select" [(ngModel)]="selectedCinema">
-      <option value="" disabled>-- Sélectionner --</option>
-      <option *ngFor="let c of cinemas" [value]="c">{{ c }}</option>
+    <label for="villeSelect" class="form-label">Choisissez une ville :</label>
+    <select id="villeSelect" class="form-select" [(ngModel)]="selectedVille" (change)="filtrerFilmsParVille(); afficherSeances()">
+      <option [ngValue]="''" disabled>-- Sélectionner une ville --</option>
+      <option *ngFor="let ville of cinemas" [ngValue]="ville">{{ ville }}</option>
     </select>
   </div>
 
   <!-- Choix du film -->
   <div class="mb-3">
-    <label for="film">Choisissez un film :</label>
-    <select id="film" class="form-select" [(ngModel)]="selectedFilmId">
-      <option [ngValue]="null" disabled>-- Sélectionner --</option>
-      <option *ngFor="let film of films" [ngValue]="film._id">{{ film.titre }}</option>
+    <label for="filmSelect" class="form-label">Choisissez un film :</label>
+    <select id="filmSelect" class="form-select" [(ngModel)]="selectedFilmId" (change)="afficherSeances()">
+      <option [ngValue]="null" disabled>-- Sélectionner un film --</option>
+      <option *ngFor="let f of filmsFiltres" [ngValue]="f._id">{{ f.titre }}</option>
     </select>
   </div>
 
-  <!-- Résumé sélection -->
-  <div *ngIf="afficherSeances()" class="alert alert-info">
-    🎬 Vous avez sélectionné : <strong>{{ filmSelectionne?.titre }}</strong>
-    au cinéma <strong>{{ selectedCinema }}</strong>.
-    <br />
-    (Les séances s’afficheront ici à l’étape suivante)
+  <!-- Liste des séances filtrées -->
+  <div *ngIf="seancesFiltrees.length > 0">
+    <h5 class="mt-4">Séances disponibles :</h5>
+    <ul class="list-group mb-4">
+      <li *ngFor="let s of seancesFiltrees"
+          class="list-group-item d-flex justify-content-between align-items-center"
+          [class.active]="seanceSelectionnee === s"
+          (click)="selectionnerSeance(s)">
+        <div>
+          📅 {{ s.jour }} - 🕒 {{ s.debut }} à {{ s.fin }} - 🎬 {{ s.qualite }} - 💶 {{ s.prix }} € - 🎫 {{ s.placesDisponibles }} places
+        </div>
+      </li>
+    </ul>
   </div>
 
-  <!-- Liste des séances -->
-  <div class="mt-4" *ngIf="seancesFiltrees.length">
-    <h5>Séances disponibles :</h5>
-    <ul class="list-group">
-      <li class="list-group-item d-flex justify-content-between align-items-center"
-          *ngFor="let s of seancesFiltrees">
-        <div>
-          <strong>{{ s.jour }}</strong> — {{ s.debut }} à {{ s.fin }} ({{ s.qualite }})
-        </div>
-        <div>
-          <strong>{{ s.prix }} €</strong>
-          <button class="btn btn-sm btn-outline-primary ms-3" (click)="selectionnerSeance(s)">
-            Réserver cette séance
-          </button>
-        </div>
-      </li>    
-    </ul>
-
-    <!-- Formulaire de réservation -->
-    <div *ngIf="seanceSelectionnee" class="mt-4 p-4 border rounded bg-light">
-      <h5>Réservation pour {{ filmSelectionne?.titre }} — {{ selectedCinema }}</h5>
-      <p>Séance : {{ seanceSelectionnee.jour }} à {{ seanceSelectionnee.debut }} ({{ seanceSelectionnee.qualite }})</p>
-
+  <!-- Formulaire de réservation -->
+  <div *ngIf="seanceSelectionnee">
+    <h5 class="mt-4">🎯 Réserver la séance sélectionnée</h5>
+    <form (ngSubmit)="validerReservation()">
       <div class="mb-3">
-        <label for="places">Nombre de places :</label>
-        <input type="number" id="places" class="form-control" [(ngModel)]="nbPlaces" min="1" max="10" />
+        <label for="nbPlaces" class="form-label">Nombre de places :</label>
+        <input
+          type="number"
+          id="nbPlaces"
+          class="form-control"
+          [(ngModel)]="nbPlaces"
+          name="nbPlaces"
+          min="1"
+          [max]="seanceSelectionnee.placesDisponibles"
+          required
+        />
       </div>
-
-      <p><strong>Prix unitaire :</strong> {{ seanceSelectionnee.prix }} €</p>
-      <p><strong>Total :</strong> {{ seanceSelectionnee.prix * nbPlaces || 0 }} €</p>
-
-      <button class="btn btn-success mt-2" [disabled]="false" (click)="validerReservation()">
-        Valider la réservation
-      </button>
-    </div>
+      <button type="submit" class="btn btn-primary">✅ Réserver</button>
+    </form>
   </div>
 </div>

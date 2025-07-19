@@ -21,7 +21,7 @@ const filmSchema = new mongoose.Schema({
   note: Number,
   imageUrl: String,
   cinemas: [String],
-  seances: [seanceSchema],  // 🔥 Utilise maintenant un vrai sous-schema
+  seances: [seanceSchema],  
 });
 
 module.exports = mongoose.model('Film', filmSchema);

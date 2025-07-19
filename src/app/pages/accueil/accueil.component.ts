@@ -4,6 +4,7 @@ import { RouterModule } from '@angular/router';
 import { HttpClientModule } from '@angular/common/http';
 import { Film } from '../../models/film.model';
 import { FilmService } from '../../services/film.service';
+import { AvisService } from '../../services/avis.service';
 
 @Component({
   selector: 'app-accueil',
@@ -17,7 +18,7 @@ export class AccueilComponent {
   filmsDuDernierMercredi: Film[] = [];
   filmsAAffiche: Film[] = [];
 
-  constructor(private filmService: FilmService) {}
+  constructor(private filmService: FilmService, private avisService: AvisService) {}
 
   ngOnInit(): void {
   const dernierMercredi = this.getDernierMercredi();
@@ -25,14 +26,20 @@ export class AccueilComponent {
   this.filmService.getFilms().subscribe({
     next: (films: Film[]) => {
       // 🔹 Tous les films à l'affiche (aucun filtrage)
-      this.filmsAAffiche = films;
+      this.filmsAAffiche = films;       
 
       // 🔹 Films du dernier mercredi (filtrés)
       this.filmsDuDernierMercredi = films.filter((film: Film) =>
         film.seances?.some((seance) => seance.jour === dernierMercredi)
       );
 
-      console.log('🎬 Films du mercredi :', this.filmsDuDernierMercredi);
+       // 🔸 Pour chaque film, on récupère la note moyenne
+      films.forEach(film => {
+        this.avisService.getMoyenneNote(film._id!).subscribe({
+          next: moyenne => film.note = moyenne,
+          error: err => console.error(`❌ Erreur moyenne film ${film.titre}`, err)
+        });
+      });
     },
     error: (err: any) => {
       console.error('❌ Erreur chargement des films', err);

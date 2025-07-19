@@ -1,9 +1,8 @@
 const express = require('express');
 const router = express.Router();
 const { verifyToken } = require('../middlewares/auth.middleware');
-const { verifyEmploye } = require('../middlewares/role.middleware');
+const { verifyEmployeOrAdmin } = require('../middlewares/role.middleware');
 const Avis = require('../models/avis.model');
-
 
 // Route publique pour récupérer les avis validés d’un film via query (filmId + valide)
 router.get('/public', async (req, res) => {
@@ -23,7 +22,7 @@ router.get('/public', async (req, res) => {
 
 
 // Récupérer tous les avis (utilisé côté admin/employé)
-router.get('/', verifyToken, verifyEmploye, async (req, res) => {
+router.get('/', verifyToken, verifyEmployeOrAdmin, async (req, res) => {
   try {
     const avis = await Avis.find();
     res.status(200).json(avis);
@@ -46,15 +45,13 @@ router.get('/film/:filmId', async (req, res) => {
 router.post('/', verifyToken, async (req, res) => {
   try {
     const { filmId, note, commentaire } = req.body;
-
     const nouvelAvis = new Avis({
       filmId,
       utilisateurId: req.user.id,
       note,
       commentaire,
-      valide: false // en attente de validation
+      valide: false 
     });
-
     await nouvelAvis.save();
     res.status(201).json({ message: 'Avis ajouté, en attente de validation.' });
   } catch (err) {
@@ -63,13 +60,12 @@ router.post('/', verifyToken, async (req, res) => {
 });
 
 // Valider un avis (réservé aux employés)
-router.put('/:id/valider', verifyToken, verifyEmploye, async (req, res) => {
+router.put('/:id/valider', verifyToken, verifyEmployeOrAdmin, async (req, res) => {
   try {
     const avis = await Avis.findById(req.params.id);
     if (!avis) {
       return res.status(404).json({ message: 'Avis non trouvé' });
     }
-
     avis.valide = true;
     await avis.save();
     res.status(200).json({ message: 'Avis validé.' });
@@ -79,13 +75,12 @@ router.put('/:id/valider', verifyToken, verifyEmploye, async (req, res) => {
 });
 
 // Supprimer un avis (réservé aux employés)
-router.delete('/:id', verifyToken, verifyEmploye, async (req, res) => {
+router.delete('/:id', verifyToken, verifyEmployeOrAdmin, async (req, res) => {
   try {
     const avis = await Avis.findById(req.params.id);
     if (!avis) {
       return res.status(404).json({ message: 'Avis non trouvé' });
     }
-
     await avis.deleteOne();
     res.status(200).json({ message: 'Avis supprimé avec succès' });
   } catch (err) {
@@ -94,11 +89,41 @@ router.delete('/:id', verifyToken, verifyEmploye, async (req, res) => {
 });
 
 // Récupérer uniquement les avis non validés (pour l’admin)
-router.get('/non-valides', verifyToken, verifyEmploye, async (req, res) => {
+router.get('/non-valides', verifyToken, verifyEmployeOrAdmin, async (req, res) => {
   try {
     const avis = await Avis.find({ valide: false });
+    console.log('📥 Requête reçue : récupération des avis non validés');
+console.log('🎯 Résultat attendu :', avis);
+
     res.status(200).json(avis);
   } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+});
+
+// Route pour calculer la moyenne des notes d’un film (avis validés uniquement)
+const mongoose = require('mongoose');
+
+// ...
+
+router.get('/film/:filmId/moyenne-note', async (req, res) => {
+  try {
+    const filmId = new mongoose.Types.ObjectId(req.params.filmId);
+
+    const moyenne = await Avis.aggregate([
+      { $match: { filmId: filmId, valide: true } },
+      {
+        $group: {
+          _id: '$filmId',
+          moyenneNote: { $avg: '$note' }
+        }
+      }
+    ]);
+
+    const resultat = moyenne.length > 0 ? moyenne[0].moyenneNote : 0;
+    res.status(200).json({ moyenne: resultat });
+  } catch (err) {
+    console.error('Erreur moyenne note :', err);
     res.status(500).json({ message: err.message });
   }
 });

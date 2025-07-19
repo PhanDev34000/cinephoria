@@ -33,6 +33,7 @@
         <img [src]="film.imageUrl" class="card-img-top" [alt]="film.titre" />
         <div class="card-body">
           <h5 class="card-title">{{ film.titre }}</h5>
+          <p><strong>Villes :</strong> {{ film.villes?.join(', ') }}</p>
           <p class="card-text">{{ film.description }}</p>
           <p class="mb-1">Âge minimum : {{ film.ageMinimum }} ans</p>
           <p class="mb-1">
@@ -41,7 +42,7 @@
               {{ film.coupDeCoeur ? 'Oui' : 'Non' }}
             </span>
           </p>
-          <p class="mb-0">Note : ⭐ {{ film.note }} / 5</p>
+          <p class="mb-0">Note : {{ film.note || '–' }}/5</p>
 
           <!-- BOUTON Lire les avis -->
         <button class="btn btn-outline-secondary w-100 my-2" (click)="toggleAvis(film)">

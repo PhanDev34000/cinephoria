@@ -5,7 +5,8 @@ import { Film } from '../../models/film.model';
 import { SeanceService } from '../../services/seance.service';
 import { Seance } from '../../models/seance.model';
 import { FilmService } from '../../services/film.service';
-
+import { SallesService } from '../../services/salles.service';
+import { Salle } from '../../models/salle.model';
 
 
 @Component({
@@ -19,7 +20,7 @@ export class AdminSeancesComponent implements OnInit {
   films: Film[] = [];
   filmSelectionne: (Film & { seances: Seance[] }) | null = null;
   seances: Seance[] = [];
-
+  salles: Salle[] = [];
 
  // nouvelleSeance: any = {};
   seanceEnCours: any = {
@@ -29,11 +30,11 @@ export class AdminSeancesComponent implements OnInit {
   fin: '',
   qualite: '',
   prix: null,
-  cinema: '',
+  salleId: '',
   placesDisponibles: null
 };  
 
-constructor(private seanceService: SeanceService, private filmService: FilmService) { }
+constructor(private seanceService: SeanceService, private filmService: FilmService,  private salleService: SallesService) { }
 
 ngOnInit(): void {
   this.filmService.getFilms().subscribe({
@@ -41,9 +42,15 @@ ngOnInit(): void {
       this.films = data;
       console.log('🎬 Films chargés dans admin-seances :', this.films);
     },
-    error: (err) => {
-      console.error('❌ Erreur chargement films', err);
-    }
+    error: (err) => console.error('❌ Erreur chargement films', err)
+  });
+
+  this.salleService.getSalles().subscribe({
+    next: (data) => {
+      this.salles = data;
+      console.log('📍 Salles chargées dans admin-seances :', this.salles);
+    },
+    error: (err) => console.error('❌ Erreur chargement salles', err)
   });
 }
 
@@ -52,7 +59,7 @@ ngOnInit(): void {
 
   const seanceAvecFilm = {
     ...this.seanceEnCours,
-    filmId: this.filmSelectionne._id, // on envoie l’ID du film lié
+    filmId: this.filmSelectionne._id, 
     prix: Number(this.seanceEnCours.prix),
     placesDisponibles: Number(this.seanceEnCours.placesDisponibles)
   };
@@ -144,7 +151,7 @@ resetForm() {
   }
 
   onFilmSelect(film: Film): void {
-  this.filmSelectionne = film;
+  this.filmSelectionne = { ...film, seances: film.seances || [] };
   this.seanceEnCours = {
     jour: '',
     debut: '',
@@ -155,8 +162,11 @@ resetForm() {
     placesDisponibles: null,
     filmId: film._id!
   };
-  this.chargerSeancesFilm(film._id!); // Charge les séances du film
-}
+  this.chargerSeancesFilm(film._id!); }
 
+  getNomSalle(salleId: string): string {
+  const salle = this.salles.find(s => s._id === salleId);
+  return salle ? salle.nom : 'Salle inconnue';
+}
 
 }

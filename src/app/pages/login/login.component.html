@@ -14,6 +14,11 @@
     <div class="text-danger" *ngIf="f['password'].invalid && f['password'].touched">
       Mot de passe requis.
     </div>
+    <!-- Lien vers la page de réinitialisation -->
+    <div class="text-end mt-1">
+      <a (click)="goToReset()" style="cursor: pointer; color: blue; text-decoration: underline;">Mot de passe oublié ?</a>
+
+    </div>
   </div>
 
 

@@ -8,4 +8,5 @@ export interface Seance {
   cinema: string;
   placesDisponibles: number;
   filmId: string;
+  salleId: string;
 }

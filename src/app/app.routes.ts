@@ -2,8 +2,7 @@ import { Routes } from '@angular/router';
 import { AdminGuard } from './guards/admin.guard';
 import { authRoleGuard } from './guards/role.guard';
 import { authUtilisateurGuard } from './guards/auth-utilisateur.guard';
-
-
+import { employeGuard } from './guards/role.guard';
 
 export const appRoutes: Routes = [
   {
@@ -95,6 +94,11 @@ export const appRoutes: Routes = [
   path: 'admin/stats',
   canActivate: [AdminGuard],
   loadComponent: () => import('./pages/admin-stats/admin-stats.component').then(m => m.AdminStatsComponent),
-},
+  },
+  {
+    path: 'employe-dashboard',
+    loadComponent: () => import('./pages/employe-dashboard/employe-dashboard.component').then(m => m.EmployeDashboardComponent),
+    canActivate: [employeGuard]
+  }
 ];
 

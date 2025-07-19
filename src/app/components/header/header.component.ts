@@ -21,8 +21,7 @@ export class HeaderComponent implements OnInit {
         const payload = JSON.parse(atob(token.split('.')[1]));
         this.role = payload.role;
         this.isLoggedIn = true;
-      } catch (e) {
-        console.error('❌ Erreur décodage token', e);
+      } catch (e) {        
         this.role = null;
         this.isLoggedIn = false;
       }
@@ -30,19 +29,24 @@ export class HeaderComponent implements OnInit {
   }
 
 estAdmin(): boolean {
-  const utilisateurStr = localStorage.getItem('utilisateur');
-  if (!utilisateurStr) return false;
+  const token = localStorage.getItem('token');
+  if (!token) return false;
 
-  const utilisateur = JSON.parse(utilisateurStr);
-  return utilisateur.email === 'admin@cinephoria.fr';  // ou l'email que tu utilises pour l'admin
+  try {
+    const payload = JSON.parse(atob(token.split('.')[1]));
+    return payload.role === 'administrateur';
+  } catch (e) {
+    return false;
+  }
 }
+
 
  logout(): void {
   localStorage.removeItem('token');
   localStorage.removeItem('utilisateur');
   this.role = null;
   this.isLoggedIn = false;
-  window.location.href = '/'; // ou utilise le Router si tu préfères
+  window.location.href = '/'; 
 }
 
 

@@ -11,11 +11,23 @@ function verifyToken(req, res, next) {
 
   try {
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
-    req.user = decoded; // Contient id, role, etc.
+    req.user = decoded; 
+
+     console.log('🟢 Token décodé:', decoded); 
     next();
   } catch (err) {
     return res.status(403).json({ message: 'Token invalide ou expiré' });
   }
 }
 
-module.exports = { verifyToken };
+function verifyEmploye(req, res, next) {
+  console.log('🎯 Rôle dans verifyEmploye :', req.user?.role);
+  if (req.user.role === 'employe' || req.user.role === 'admin') {
+    next();
+  } else {
+    return res.status(403).json({ message: 'Accès interdit (employé requis)' });
+  }
+}
+
+
+module.exports = { verifyToken, verifyEmploye };

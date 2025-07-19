@@ -14,7 +14,7 @@
     <ul class="list-group mb-4">
       <li *ngFor="let s of seances" class="list-group-item d-flex justify-content-between align-items-center">
         <div>
-          {{ s.jour }} - {{ s.debut }} à {{ s.fin }} ({{ s.qualite }}, {{ s.cinema }}) | {{ s.prix }} € | {{ s.placesDisponibles }} places
+          {{ s.jour }} - {{ s.debut }} à {{ s.fin }} ({{ s.qualite }}, {{ getNomSalle(s.salleId) }}) | {{ s.prix }} € | {{ s.placesDisponibles }} places
         </div>
         <button class="btn btn-sm btn-warning me-2" (click)="modifierSeance(s)">✏️</button>
         <button class="btn btn-sm btn-danger" (click)="supprimerSeance($any(s)._id)">🗑️</button>
@@ -36,18 +36,21 @@
           <input class="form-control" placeholder="Qualité (4K, 3D...)" [(ngModel)]="seanceEnCours.qualite" name="qualite" required />
         </div>
         <div class="col-md-4 mb-2">
-          <input class="form-control" placeholder="Cinéma" [(ngModel)]="seanceEnCours.cinema" name="cinema" required />
+          <select class="form-select" [(ngModel)]="seanceEnCours.salleId" name="salleId" required>
+            <option value="" disabled selected>-- Choisir une salle --</option>
+            <option *ngFor="let salle of salles" [value]="salle._id">
+              {{ salle.ville }} - {{ salle.nom }}
+            </option>
+          </select>
         </div>
         <div class="col-md-4 mb-2">
           <input
-  class="form-control"
-  placeholder="Prix (€)"
-  type="number"
-  [(ngModel)]="seanceEnCours.prix"
-  name="prix"
-/>
-
-
+            class="form-control"
+            placeholder="Prix (€)"
+            type="number"
+            [(ngModel)]="seanceEnCours.prix"
+            name="prix"
+          />
         </div>
         <div class="col-md-4 mb-2">
           <input class="form-control" placeholder="Places disponibles" type="text" [(ngModel)]="seanceEnCours.placesDisponibles" name="placesDisponibles" required />

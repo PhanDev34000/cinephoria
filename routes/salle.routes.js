@@ -2,17 +2,20 @@ const express = require('express');
 const router = express.Router();
 const Salle = require('../models/salle.model');
 const { verifyToken } = require('../middlewares/auth.middleware');
-const { verifyAdmin, verifyEmploye } = require('../middlewares/role.middleware');
+const { verifyEmployeOrAdmin } = require('../middlewares/role.middleware');
 
-
-// GET toutes les salles
+// GET toutes les salles (public)
 router.get('/', async (req, res) => {
-  const salles = await Salle.find();
-  res.json(salles);
+  try {
+    const salles = await Salle.find();
+    res.json(salles);
+  } catch (error) {
+    res.status(500).json({ message: 'Erreur serveur' });
+  }
 });
 
-// POST ajouter une salle
-router.post('/', async (req, res) => {
+// POST ajouter une salle (personnel uniquement)
+router.post('/', verifyToken, verifyEmployeOrAdmin, async (req, res) => {
   try {
     const nouvelleSalle = new Salle(req.body);
     await nouvelleSalle.save();
@@ -22,10 +25,8 @@ router.post('/', async (req, res) => {
   }
 });
 
-
-// PUT modifier une salle
-router.put('/:id', async (req, res) => {
-  console.log('📥 Route PUT /api/salles/:id atteinte', req.params.id);
+// PUT modifier une salle (personnel uniquement)
+router.put('/:id', verifyToken, verifyEmployeOrAdmin, async (req, res) => {  
   try {
     const updated = await Salle.findByIdAndUpdate(req.params.id, req.body, { new: true });
     res.json(updated);
@@ -34,8 +35,8 @@ router.put('/:id', async (req, res) => {
   }
 });
 
-// DELETE supprimer une salle
-router.delete('/:id', async (req, res) => {
+// DELETE supprimer une salle (personnel uniquement)
+router.delete('/:id', verifyToken, verifyEmployeOrAdmin, async (req, res) => {
   try {
     await Salle.findByIdAndDelete(req.params.id);
     res.json({ message: 'Salle supprimée' });

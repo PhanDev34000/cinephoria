@@ -13,8 +13,7 @@ import { EmployesService } from '../../services/employes.service';
 })
 export class AdminEmployesComponent implements OnInit {
   employes: Employe[] = [];
-  employeEnCours: Employe = { nom: '', prenom: '', email: '', nomUtilisateur: '', motDePasse: '', role: 'employe'};
-  //nouvelEmploye = { nom: '', prenom: '', email: '', nomUtilisateur: '', motDePasse: '', role: 'employe'};
+  employeEnCours: Partial<Employe> | null = null;
 
   constructor(private employesService: EmployesService) {}
 
@@ -23,41 +22,68 @@ export class AdminEmployesComponent implements OnInit {
   }
 
   chargerEmployes(): void {
-    this.employesService.getEmployes().subscribe({
-      next: (data) => this.employes = data,
-      error: (err) => console.error('Erreur chargement employés :', err)
-    });
-  }
+  this.employesService.getEmployes().subscribe({
+    next: (data) => {
+      console.log('👥 Employés récupérés :', data); 
+      this.employes = data;
+    },
+    error: (err) => console.error('Erreur chargement employés :', err)
+  });
+}
 
   ajouterEmploye(): void {
-    this.employesService.ajouterEmploye(this.employeEnCours).subscribe({
-      next: (data) => {
-        this.employes.push(data);
-        this.employeEnCours = { nom: '', prenom: '', email: '', nomUtilisateur: '', motDePasse: '', role: 'employe'};
-        alert('Employé ajouté ✅');
+    if (!this.employeEnCours) return;
+
+    const nouvelEmploye: Employe = {
+      nom: this.employeEnCours?.nom || '',
+      prenom: this.employeEnCours?.prenom || '',
+      email: this.employeEnCours?.email || '',
+      nomUtilisateur: this.employeEnCours?.nomUtilisateur || '',
+      motDePasse: this.employeEnCours?.motDePasse || '',
+      role: this.employeEnCours?.role || 'employe'
+    };
+
+    this.employesService.ajouterEmploye(nouvelEmploye).subscribe({
+      next: (nouvelEmploye) => {
+        this.employes.push(nouvelEmploye);
+        this.resetForm();
+        alert('✅ Employé ajouté');
       },
       error: (err) => {
-        console.error('Erreur ajout :', err);
-        alert('Erreur ajout employé');
+        console.error('❌ Erreur ajout employé :', err);
+        alert('❌ Erreur lors de l’ajout');
       }
     });
   }
 
   modifierEmploye(employe: Employe): void {
+    console.log('🖊️ Édition employé :', employe);
     this.employeEnCours = { ...employe };
   }
 
   enregistrerModification(): void {
-    if (!this.employeEnCours._id) return;
+    console.log('📤 Modification employé :', this.employeEnCours);
+    if (!this.employeEnCours || !this.employeEnCours._id) { console.warn('⛔ Aucune donnée employé en cours ou ID manquant.'); 
+      return; };
 
-    this.employesService.modifierEmploye(this.employeEnCours._id, this.employeEnCours).subscribe({
-      next: () => {
-        const index = this.employes.findIndex(e => e._id === this.employeEnCours._id);
-        if (index !== -1) this.employes[index] = { ...this.employeEnCours };
-        this.employeEnCours = { nom: '', prenom: '', email: '', nomUtilisateur: '', motDePasse: '', role: 'employe'};
-        alert('Employé modifié ✅');
+    const employeModifie: Employe = {
+      _id: this.employeEnCours._id!,
+      nom: this.employeEnCours.nom || '',
+      prenom: this.employeEnCours.prenom || '',
+      email: this.employeEnCours.email || '',
+      nomUtilisateur: this.employeEnCours.nomUtilisateur || '',
+      motDePasse: this.employeEnCours.motDePasse || '',
+      role: this.employeEnCours.role || 'employe'
+    };
+
+    this.employesService.modifierEmploye(employeModifie._id!, employeModifie).subscribe({
+      next: (employeModifie) => {
+        const index = this.employes.findIndex(e => e._id === employeModifie._id);
+        if (index !== -1) this.employes[index] = employeModifie;
+        this.resetForm();
+        alert('✅ Employé modifié');
       },
-      error: () => alert('Erreur modification')
+      error: () => alert('❌ Erreur modification')
     });
   }
 
@@ -65,9 +91,20 @@ export class AdminEmployesComponent implements OnInit {
     this.employesService.supprimerEmploye(id).subscribe({
       next: () => {
         this.employes = this.employes.filter(e => e._id !== id);
-        alert('Employé supprimé ❌');
+        alert('🗑️ Employé supprimé');
       },
-      error: () => alert('Erreur suppression')
+      error: () => alert('❌ Erreur suppression')
     });
+  }
+
+  resetForm(): void {
+    this.employeEnCours = {
+      nom: '',
+      prenom: '',
+      email: '',
+      nomUtilisateur: '',
+      motDePasse: '',
+      role: 'employe'
+    };
   }
 }

@@ -29,17 +29,15 @@ export class AvisFormComponent implements OnInit {
 
   ngOnInit() {
     this.filmsService.getFilms().subscribe({
-      next: (films) => this.films = films, // 👈 "films" à la place de "data"
+      next: (films) => this.films = films, 
       error: (err) => console.error('❌ Erreur lors du chargement des films :', err)
     });
   }
 
   onSubmit() {
-    if (this.form.valid) {
-       console.log('📤 Données envoyées :', this.form.value);
+    if (this.form.valid) {       
       this.avisService.envoyerAvis(this.form.value).subscribe({
         next: (res) => {
-          console.log('✅ Avis envoyé :', res);
           alert('Avis envoyé avec succès !');
         },
         error: (err) => {

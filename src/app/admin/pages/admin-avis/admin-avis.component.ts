@@ -3,6 +3,8 @@ import { CommonModule } from '@angular/common';
 import { HttpClient } from '@angular/common/http';
 import { RouterModule } from '@angular/router';
 import { FilmService } from '../../../services/film.service';
+import { HttpHeaders } from '@angular/common/http';
+
 
 
 @Component({
@@ -29,18 +31,29 @@ export class AdminAvisComponent implements OnInit {
 }
 
 
-  chargerAvis(): void {
-    this.http.get<any[]>('http://localhost:3000/api/avis/non-valides').subscribe({
-      next: (data) => this.avisNonValides = data,
-      error: (err) => console.error('❌ Erreur chargement des avis :', err)
-    });
+ chargerAvis(): void {
+  const token = localStorage.getItem('token');
+  const headers = new HttpHeaders().set('Authorization', `Bearer ${token}`);
+
+  this.http.get<any[]>('http://localhost:3000/api/avis/non-valides', { headers }).subscribe({
+  next: (data) => {
+    console.log('📦 Avis non validés reçus :', data); 
+    this.avisNonValides = data;
+  },
+  error: (err) => {
+    console.error('❌ Erreur chargement des avis :', err);
   }
+});
+
+}
+
+
 
   validerAvis(id: string): void {
     this.http.put(`http://localhost:3000/api/avis/${id}/valider`, {}).subscribe({
       next: () => {
         this.message = '✅ Avis validé';
-        this.chargerAvis(); // recharger les avis
+        this.chargerAvis(); 
       },
       error: (err) => {
         console.error('❌ Erreur validation :', err);
@@ -55,8 +68,7 @@ export class AdminAvisComponent implements OnInit {
     this.http.delete(`http://localhost:3000/api/avis/${id}`).subscribe({
       next: () => {
         this.message = '🗑️ Avis supprimé';
-        this.chargerAvis(); // recharger les avis
-      },
+        this.chargerAvis(); },
       error: (err) => {
         console.error('❌ Erreur suppression :', err);
         this.message = 'Erreur lors de la suppression';

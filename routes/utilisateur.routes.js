@@ -6,9 +6,7 @@ const User = require('../models/user.model');
 const { verifyToken } = require('../middlewares/auth.middleware');
 const { verifyEmploye } = require('../middlewares/role.middleware');
 
-console.log('✅ utilisateur.routes.js chargé ET utilisé');
-
-// ✅ GET Tous les utilisateurs
+// GET Tous les utilisateurs
 router.get('/', async (req, res) => {
   try {
     const utilisateurs = await User.find();
@@ -18,7 +16,7 @@ router.get('/', async (req, res) => {
   }
 });
 
-// ✅ POST Créer un compte utilisateur
+// POST Créer un compte utilisateur
 router.post('/', async (req, res) => {
   try {
     const { nom, prenom, email, nomUtilisateur, motDePasse } = req.body;
@@ -38,7 +36,6 @@ router.post('/', async (req, res) => {
       password: hash,
       role: 'utilisateur'
     });
-
     await nouvelUtilisateur.save();
 
     // Génération du token
@@ -66,8 +63,38 @@ router.post('/', async (req, res) => {
   }
 });
 
+// Réinitialiser un mdp d'un utilisateur
 
-// ✅ POST Créer un employé
+router.put('/reset-password', async (req, res) => {
+  const { email, newPassword } = req.body;
+  if (!email || !newPassword) {
+    console.log('❌ Données manquantes');
+    return res.status(400).json({ message: 'Email et nouveau mot de passe requis' });
+  }
+
+  try {
+    const user = await User.findOne({ email });
+    console.log('👤 Utilisateur trouvé :', user);
+
+    if (!user) {
+      console.log('❌ Utilisateur introuvable');
+      return res.status(404).json({ message: 'Utilisateur introuvable' });
+    }
+
+    const hashed = await bcrypt.hash(newPassword, 10);
+    user.password = hashed;
+
+    await user.save();
+
+    console.log('✅ Mot de passe mis à jour');
+    res.status(200).json({ message: 'Mot de passe mis à jour' });
+  } catch (error) {
+    console.error('🔥 Erreur serveur :', error);
+    res.status(500).json({ message: 'Erreur serveur' });
+  }
+});
+
+// POST Créer un employé
 router.post('/employes', async (req, res) => {
   try {
     const { nom, prenom, email, nomUtilisateur, motDePasse, role } = req.body;
@@ -93,12 +120,11 @@ router.post('/employes', async (req, res) => {
   }
 });
 
-// ✅ PUT Réinitialiser mot de passe d’un employé
+// PUT Réinitialiser mot de passe d’un employé
 router.put('/employes/:id/reset-password', async (req, res) => {
   try {
     const { nouveauMotDePasse } = req.body;
     const hash = await bcrypt.hash(nouveauMotDePasse, 10);
-
     const updated = await User.findByIdAndUpdate(
       req.params.id,
       { password: hash },
@@ -115,27 +141,17 @@ router.put('/employes/:id/reset-password', async (req, res) => {
   }
 });
 
-// ✅ POST Login - Générer un token JWT
+// POST Login - Générer un token JWT
 router.post('/login', async (req, res) => {
-  console.log('🔐 Tentative de connexion avec email :', req.body.email);
-  console.log('📨 Données reçues côté serveur :', req.body);
-
-  const { email, password } = req.body;
-
+   const { email, password } = req.body;
   try {
-    const utilisateur = await User.findOne({ email });
-    console.log('🔍 Utilisateur trouvé ?', utilisateur);
-
+    const utilisateur = await User.findOne({ email });    
     if (!utilisateur) {
       return res.status(401).json({ message: 'Email ou mot de passe incorrect' });
     }
 
-    console.log('🔑 Mot de passe reçu :', password);
-    console.log('🔒 Hash en BDD :', utilisateur.password);
-
     const isMatch = await bcrypt.compare(password, utilisateur.password);
-    console.log('✅ Correspondance ? =>', isMatch);
-
+   
     if (!isMatch) {
       return res.status(401).json({ message: 'Email ou mot de passe incorrect' });
     }
@@ -164,9 +180,69 @@ router.post('/login', async (req, res) => {
   }
 });
 
-// ✅ GET /me - Vérifie le token
+// GET /me - Vérifie le token
 router.get('/me', verifyToken, (req, res) => {
   res.json({ message: 'Token valide', user: req.user });
+});
+
+// GET /api/utilisateurs/employes : retourne les utilisateurs avec rôle "employe" ou "admin"
+router.get('/employes', async (req, res) => {
+  try {
+    const employes = await User.find({ role: { $in: ['employe', 'admin'] } });
+    res.json(employes);
+  } catch (error) {
+    console.error('❌ Erreur récupération employés :', error);
+    res.status(500).json({ message: 'Erreur serveur' });
+  }
+});
+
+// PUT /api/utilisateurs/:id — modifier un employé
+
+
+router.put('/:id', async (req, res) => {
+  const { nom, prenom, email, nomUtilisateur, role, motDePasse } = req.body;
+
+  try {
+    const updatedFields = {
+      nom,
+      prenom,
+      email,
+      nomUtilisateur,
+      role
+    };
+
+    // 👉 Si motDePasse est fourni : le hasher et le mettre à jour
+    if (motDePasse && motDePasse.trim() !== '') {
+      const hashed = await bcrypt.hash(motDePasse, 10);
+      updatedFields.password = hashed;
+      console.log('🔐 Nouveau mot de passe hashé pour employé/admin');
+    }
+
+    const updatedUser = await User.findByIdAndUpdate(
+      req.params.id,
+      updatedFields,
+      { new: true }
+    );
+
+    res.json(updatedUser);
+  } catch (error) {
+    console.error('❌ Erreur modification employé :', error);
+    res.status(500).json({ message: "Erreur modification employé" });
+  }
+});
+
+
+// Vérifie si email existe avant reset
+router.post('/check-email', async (req, res) => {
+  const { email } = req.body;
+   console.log('📩 Email reçu :', email);
+  if (!email) return res.status(400).json({ message: 'Email requis' });
+
+  const user = await User.findOne({ email });
+  console.log('🔍 Utilisateur trouvé :', user);
+  if (!user) return res.status(404).json({ message: 'Email introuvable' });
+
+  res.status(200).json({ message: 'Email trouvé' });
 });
 
 module.exports = router;

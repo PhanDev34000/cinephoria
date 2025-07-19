@@ -14,4 +14,17 @@ function verifyEmploye(req, res, next) {
   }
 }
 
-module.exports = { verifyAdmin, verifyEmploye };
+// Nouveau middleware pour admin OU employé
+function verifyEmployeOrAdmin(req, res, next) {
+  if (req.user && (req.user.role === 'admin' || req.user.role === 'employe')) {
+    return next();
+  } else {
+    return res.status(403).json({ message: 'Accès réservé au personnel' });
+  }
+}
+
+module.exports = {
+  verifyAdmin,
+  verifyEmploye,
+  verifyEmployeOrAdmin
+};

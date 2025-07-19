@@ -9,10 +9,10 @@ export interface Film {
   dateFin: string; 
   ageMinimum: number;
   coupDeCoeur: boolean;
-  note: number; // de 0 à 5
+  note?: number; // de 0 à 5
   imageUrl: string;
   genre: string;
-  cinemas: string[]; // ex : ["Paris", "Lille"]
+  villes?: string[];
   dateAjout?: string;
-  seances: Seance[];
+  seances?: Seance[];
   };

@@ -40,7 +40,7 @@ export class AdminFilmsComponent implements OnInit {
       affiche: '',
       dateDebut: '',
       dateFin: '',
-      cinemas: [],
+      villes: [],
       seances: []
     };
 

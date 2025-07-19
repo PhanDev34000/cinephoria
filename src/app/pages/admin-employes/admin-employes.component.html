@@ -1,45 +1,56 @@
 <div class="container mt-4">
   <h3>👤 Gestion des employés</h3>
 
+  <!-- Bouton pour déclencher le formulaire -->
+  <button class="btn btn-primary mb-3" (click)="employeEnCours = {
+    nom: '', prenom: '', email: '', nomUtilisateur: '', motDePasse: '', role: 'employe'
+  }">➕ Ajouter un employé</button>
+
+  <!-- Formulaire création / modification -->
+  <form *ngIf="employeEnCours" (ngSubmit)="employeEnCours._id ? enregistrerModification() : ajouterEmploye()">
+    <div class="row">
+      <div class="col-md-3 mb-2">
+        <input class="form-control" placeholder="Nom" [(ngModel)]="employeEnCours.nom" name="nom" required />
+      </div>
+      <div class="col-md-3 mb-2">
+        <input class="form-control" placeholder="Prénom" [(ngModel)]="employeEnCours.prenom" name="prenom" required />
+      </div>
+      <div class="col-md-3 mb-2">
+        <input class="form-control" type="email" placeholder="Email" [(ngModel)]="employeEnCours.email" name="email" required />
+      </div>
+      <div class="col-md-3 mb-2">
+        <input class="form-control" placeholder="Nom d'utilisateur" [(ngModel)]="employeEnCours.nomUtilisateur" name="nomUtilisateur" required />
+      </div>
+      <div class="col-md-3 mb-2">
+        <input class="form-control" type="password" placeholder="Mot de passe (laisser vide pour ne pas changer)"
+              [(ngModel)]="employeEnCours.motDePasse" name="motDePasse" [required]="!employeEnCours._id" />
+      </div>
+
+      <div class="col-md-3 mb-2">
+        <select class="form-select" [(ngModel)]="employeEnCours.role" name="role" required>
+          <option [ngValue]="'admin'">Administrateur</option>
+          <option [ngValue]="'employe'">Employé</option>
+        </select>
+      </div>
+    </div>
+
+    <button type="submit" class="btn mt-2"
+      [ngClass]="employeEnCours._id ? 'btn-warning' : 'btn-success'">
+      {{ employeEnCours._id ? '💾 Enregistrer les modifications' : '➕ Ajouter un Employé' }}
+    </button>
+  </form>
+
+  <!-- Liste des employés -->
+  <h5 class="mt-4">👥 Liste des employés</h5>
   <ul class="list-group mb-4">
-    <li *ngFor="let e of employes" class="list-group-item d-flex justify-content-between align-items-center">
-      {{ e.nom }} {{ e.prenom }} — {{ e.email }} — {{ e.role }}
+    <li *ngFor="let employe of employes" class="list-group-item d-flex justify-content-between align-items-center">
       <div>
-        <button class="btn btn-sm btn-warning me-2" (click)="modifierEmploye(e)">✏️</button>
-        <button class="btn btn-sm btn-danger" (click)="supprimerEmploye(e._id!)">🗑️</button>
+        <strong>{{ employe.nom }}</strong> {{ employe.prenom }} — {{ employe.email }} — Rôle : <strong>{{ employe.role }}</strong>
+      </div>
+      <div>
+        <button class="btn btn-sm btn-warning me-2" (click)="modifierEmploye(employe)">✏️</button>
+        <button class="btn btn-sm btn-danger" (click)="supprimerEmploye(employe._id!)">🗑️</button>
       </div>
     </li>
   </ul>
-
-  <form (ngSubmit)="employeEnCours._id ? enregistrerModification() : ajouterEmploye()">
-  <div class="row">
-    <div class="col-md-3 mb-2">
-      <input class="form-control" placeholder="Nom" [(ngModel)]="employeEnCours.nom" name="nom" required />
-    </div>
-    <div class="col-md-3 mb-2">
-      <input class="form-control" placeholder="Prénom" [(ngModel)]="employeEnCours.prenom" name="prenom" required />
-    </div>
-    <div class="col-md-3 mb-2">
-      <input class="form-control" type="email" placeholder="Email" [(ngModel)]="employeEnCours.email" name="email" required />
-    </div>
-    <div class="col-md-3 mb-2">
-      <input class="form-control" placeholder="Nom d'utilisateur" [(ngModel)]="employeEnCours.nomUtilisateur" name="nomUtilisateur" required />
-    </div>
-    <div class="col-md-3 mb-2" *ngIf="!employeEnCours._id">
-      <input class="form-control" type="password" placeholder="Mot de passe" [(ngModel)]="employeEnCours.motDePasse" name="motDePasse" required />
-    </div>
-    <div class="col-md-3 mb-2">
-      <select class="form-select" [(ngModel)]="employeEnCours.role" name="role" required>
-        <option [ngValue]="'admin'">Administrateur</option>
-        <option [ngValue]="'employe'">Employé</option>
-      </select>
-    </div>
-  </div>
-
-  <button type="submit" class="btn mt-2"
-    [ngClass]="employeEnCours._id ? 'btn-warning' : 'btn-success'">
-    {{ employeEnCours._id ? '💾 Enregistrer les modifications' : '➕ Ajouter un Employé' }}
-  </button>
-</form>
-
 </div>

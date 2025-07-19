@@ -8,8 +8,9 @@ const SeanceSchema = new mongoose.Schema({
   prix: Number,
   cinema: String,
   placesDisponibles: Number,
-  filmId: { type: mongoose.Schema.Types.ObjectId, ref: 'Film' },
-  salleId: { type: mongoose.Schema.Types.ObjectId, ref: 'Salle' }
+  filmId: { type: mongoose.Schema.Types.ObjectId, ref: 'Film', required: true },
+  salleId: { type: mongoose.Schema.Types.ObjectId, ref: 'Salle', required: true }
+
 });
 
 module.exports = mongoose.model('Seance', SeanceSchema);

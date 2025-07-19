@@ -38,9 +38,7 @@ export class RegisterComponent {
     const userData = {
       ...this.form.value,
       role: 'utilisateur'
-    };
-
-    console.log('📤 Données envoyées :', userData);
+    };    
 
     this.http.post('http://localhost:3000/api/utilisateurs', userData).subscribe({
       next: (res: any) => {

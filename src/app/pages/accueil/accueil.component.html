@@ -6,7 +6,7 @@
         <img [src]="film.imageUrl || 'assets/affiches/default.png'" class="card-img-top" [alt]="film.titre">
         <div class="card-body text-center">
           <h5 class="card-title">{{ film.titre }}</h5>
-          <p class="card-text">{{ film.genre }} — Note : {{ film.note }}</p>
+          <p class="card-text">{{ film.genre }} — Note : {{ film.note || '–' }}/5</p>
         </div>
       </div>
     </div>

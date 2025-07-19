@@ -2,17 +2,16 @@ const express = require('express');
 const router = express.Router();
 const Film = require('../models/film.model');
 const { verifyToken } = require('../middlewares/auth.middleware');
-const { verifyAdmin, verifyEmploye } = require('../middlewares/role.middleware');
+const { verifyEmployeOrAdmin } = require('../middlewares/role.middleware');
 
-
-// GET tous les films
+// GET tous les films (public)
 router.get('/', async (req, res) => {
   const films = await Film.find();
   res.json(films);
 });
 
-// POST un nouveau film
-router.post('/', async (req, res) => {
+// POST un nouveau film (réservé au personnel)
+router.post('/', verifyToken, verifyEmployeOrAdmin, async (req, res) => {
   try {
     const nouveauFilm = new Film(req.body);
     await nouveauFilm.save();
@@ -22,8 +21,8 @@ router.post('/', async (req, res) => {
   }
 });
 
-// PUT modifier un film
-router.put('/:id', async (req, res) => {
+// PUT modifier un film (réservé au personnel)
+router.put('/:id', verifyToken, verifyEmployeOrAdmin, async (req, res) => {
   try {
     const film = await Film.findByIdAndUpdate(req.params.id, req.body, { new: true });
     res.json(film);
@@ -32,8 +31,8 @@ router.put('/:id', async (req, res) => {
   }
 });
 
-// DELETE supprimer un film
-router.delete('/:id', async (req, res) => {
+// DELETE supprimer un film (réservé au personnel)
+router.delete('/:id', verifyToken, verifyEmployeOrAdmin, async (req, res) => {
   try {
     await Film.findByIdAndDelete(req.params.id);
     res.json({ message: 'Film supprimé' });
