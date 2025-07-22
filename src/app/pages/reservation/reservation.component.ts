@@ -131,13 +131,13 @@ export class ReservationComponent implements OnInit {
     const seance = this.seanceSelectionnee;
 
     if (!film || !seance) {
-      console.error('❌ Film ou séance manquant');
+      
       return;
     }
 
     const token = localStorage.getItem('token');
     if (!token) {
-      console.error('❌ Token manquant');
+      
       return;
     }
 

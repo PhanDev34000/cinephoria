@@ -1,6 +1,6 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-
 import { AdminSeancesComponent } from './admin-seances.component';
+import { HttpClientTestingModule } from '@angular/common/http/testing';
 
 describe('AdminSeancesComponent', () => {
   let component: AdminSeancesComponent;
@@ -8,9 +8,11 @@ describe('AdminSeancesComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [AdminSeancesComponent]
-    })
-    .compileComponents();
+      imports: [
+        HttpClientTestingModule,  // ✅ Pour simuler HttpClient
+        AdminSeancesComponent     // ✅ Composant standalone
+      ]
+    }).compileComponents();
 
     fixture = TestBed.createComponent(AdminSeancesComponent);
     component = fixture.componentInstance;

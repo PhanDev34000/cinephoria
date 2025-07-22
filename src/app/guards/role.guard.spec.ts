@@ -1,17 +1,21 @@
 import { TestBed } from '@angular/core/testing';
-import { CanActivateFn } from '@angular/router';
+import { authRoleGuard } from './role.guard';
+import { Router } from '@angular/router';
 
-import { roleGuard } from './role.guard';
-
-describe('roleGuard', () => {
-  const executeGuard: CanActivateFn = (...guardParameters) => 
-      TestBed.runInInjectionContext(() => roleGuard(...guardParameters));
+describe('authRoleGuard', () => {
+  let routerSpy: jasmine.SpyObj<Router>;
 
   beforeEach(() => {
-    TestBed.configureTestingModule({});
+    routerSpy = jasmine.createSpyObj('Router', ['navigate']);
+
+    TestBed.configureTestingModule({
+      providers: [
+        { provide: Router, useValue: routerSpy }
+      ]
+    });
   });
 
-  it('should be created', () => {
-    expect(executeGuard).toBeTruthy();
+  it('should be defined', () => {
+    expect(authRoleGuard).toBeTruthy();
   });
 });

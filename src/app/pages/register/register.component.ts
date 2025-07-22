@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
 import { HttpClient, HttpClientModule } from '@angular/common/http';
 import { Router } from '@angular/router';
+import { NavigationService } from '../../services/navigation.service';
 
 @Component({
   selector: 'app-register',
@@ -14,7 +15,7 @@ import { Router } from '@angular/router';
 export class RegisterComponent {
   form: FormGroup;
 
-  constructor(private fb: FormBuilder, private http: HttpClient, private router: Router) {
+  constructor(private fb: FormBuilder, private http: HttpClient, private router: Router, private navigation: NavigationService) {
     this.form = this.fb.group({
       email: ['', [Validators.required, Validators.email]],
       motDePasse: [
@@ -33,7 +34,7 @@ export class RegisterComponent {
 
   onSubmit(): void {
   this.form.markAllAsTouched();
-
+console.log('Form valid?', this.form.valid);
   if (this.form.valid) {
     const userData = {
       ...this.form.value,
@@ -53,10 +54,8 @@ export class RegisterComponent {
 
         this.form.reset();
 
-        // Rediriger + forcer mise à jour du header
-        this.router.navigate(['/']).then(() => {
-          window.location.reload();
-        });
+        this.navigation.navigateAndReload('/');
+
       },
       error: (err) => {
         console.error('❌ Erreur lors de la création :', err);
