@@ -1,7 +1,7 @@
-<div class="container mt-4">
-  <h2 class="mb-3">Filtrer les films</h2>
+<div class="container mt-3" style="border: 2px solid #2A48D4; width: 60%; margin: 0 auto; background-color: #FFF8DC; padding: 1rem; border-radius: 10px;">
+  <h2 class="text-center ">Filtrer les films</h2>
   <form class="row g-3 mb-4">
-    <div class="col-md-4">
+    <div class="col-md-4 text-center">
       <label for="cinema" class="form-label">Cinéma</label>
       <select id="cinema" class="form-select" [(ngModel)]="cinemaFiltre" name="cinema">
         <option value="">Tous</option>
@@ -9,7 +9,7 @@
       </select>
     </div>
 
-    <div class="col-md-4">
+    <div class="col-md-4 text-center">
       <label for="genre" class="form-label">Genre</label>
       <select id="genre" class="form-select" [(ngModel)]="genreFiltre" name="genre">
         <option value="">Tous</option>
@@ -17,7 +17,7 @@
       </select>
     </div>
 
-    <div class="col-md-4">
+    <div class="col-md-4 text-center">
       <label for="jour" class="form-label">Jour</label>
       <input type="date" id="jour" class="form-control" [(ngModel)]="jourFiltre" name="jour" />
     </div>
@@ -27,13 +27,13 @@
 <!-- Affichage des films -->
 <div class="container mt-5">
   <h2 class="mb-4">Tous les films projetés</h2>
-  <div class="row">
-    <div class="col-md-4 mb-4" *ngFor="let film of filmsFiltres">
-      <div class="card h-100">
-        <img [src]="film.imageUrl" class="card-img-top" [alt]="film.titre" />
+  <div class="row justify-content-center">
+    <div class="col-12 col-sm-6 col-md-4 col-lg-3 mb-4" *ngFor="let film of filmsFiltres">
+      <div class="card h-100" style="background-color: #FFF8DC !important; box-shadow: -4px -4px 8px rgba(0, 0, 0, 0.1); border: 2px solid #2A48D4">
+        <img [src]="film.imageUrl" class="card-img-top mt-3" [alt]="film.titre" />
         <div class="card-body">
           <h5 class="card-title">{{ film.titre }}</h5>
-          <p><strong>Villes :</strong> {{ film.villes?.join(', ') }}</p>
+          <p><strong>Cinéma(s) :</strong> {{ film.villes?.join(', ') }}</p>
           <p class="card-text">{{ film.description }}</p>
           <p class="mb-1">Âge minimum : {{ film.ageMinimum }} ans</p>
           <p class="mb-1">
@@ -56,18 +56,18 @@
               <p class="mb-1"><strong>Note :</strong> ⭐ {{ avis.note }}/5</p>
               <p class="mb-0"><em>"{{ avis.commentaire }}"</em></p>
             </div>
-          </div>
-          <ng-template #aucunAvis>
-            <small class="text-muted fst-italic">Aucun avis pour ce film.</small>
-          </ng-template>
-        </div>
-
-        </div>
-
-        <button class="btn btn-outline-primary w-100 mt-2" (click)="toggleSeances(film)">
+            </div>
+              <ng-template #aucunAvis>
+                <small class="text-muted fst-italic">Aucun avis pour ce film.</small>
+              </ng-template>
+            </div>
+        
+        <!-- BOUTON SEANCES  -->
+        <button class="btn btn-outline-primary w-100 mt-2 mb-2" (click)="toggleSeances(film)">
           {{ film === filmActif ? 'Masquer les séances' : 'Voir les séances' }}
         </button>
 
+        <!-- VOIR LES SEANCES  -->
         <p *ngIf="film === filmActif" class="text-danger">SÉANCES AFFICHÉES POUR CE FILM</p>
 
         <div *ngIf="film === filmActif" class="mt-3 px-3">
@@ -88,6 +88,7 @@
               </div>
             </li>
           </ul>
+        </div>
         </div>
       </div>
     </div>

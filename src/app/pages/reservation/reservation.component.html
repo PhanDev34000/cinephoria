@@ -1,5 +1,5 @@
-<div class="container mt-4">
-  <h3>🎟️ Réserver une séance</h3>
+<div style="border: 2px solid #2A48D4; width: 90%; margin: 0 auto; background-color: #FFF8DC; padding: 1rem; border-radius: 10px;" class="mt-3">
+  <h3 class="text-center">🎟️ Réserver une séance</h3>
 
   <!-- Choix de la ville -->
   <div class="mb-3">
@@ -20,19 +20,21 @@
   </div>
 
   <!-- Liste des séances filtrées -->
-  <div *ngIf="seancesFiltrees.length > 0">
-    <h5 class="mt-4">Séances disponibles :</h5>
-    <ul class="list-group mb-4">
-      <li *ngFor="let s of seancesFiltrees"
-          class="list-group-item d-flex justify-content-between align-items-center"
-          [class.active]="seanceSelectionnee === s"
-          (click)="selectionnerSeance(s)">
-        <div>
-          📅 {{ s.jour }} - 🕒 {{ s.debut }} à {{ s.fin }} - 🎬 {{ s.qualite }} - 💶 {{ s.prix }} € - 🎫 {{ s.placesDisponibles }} places
-        </div>
-      </li>
-    </ul>
-  </div>
+    <div *ngIf="seancesFiltrees.length > 0">
+      <h5 class="mt-4">Séances disponibles :</h5>
+      <ul class="list-group mb-4">
+        <li *ngFor="let s of seancesFiltrees"
+            class="list-group-item d-flex justify-content-between align-items-center text-white"
+            [class.active]="seanceSelectionnee === s"
+            (click)="selectionnerSeance(s)"
+            style="background-color: #2A48D4; cursor: pointer;">
+          <div>
+            📅 {{ s.jour }} - 🕒 {{ s.debut }} à {{ s.fin }} - 🎬 {{ s.qualite }} - 💶 {{ s.prix }} € - 🎫 {{ s.placesDisponibles }} places
+          </div>
+        </li>
+      </ul>
+    </div>
+
 
   <!-- Formulaire de réservation -->
   <div *ngIf="seanceSelectionnee">
@@ -51,7 +53,7 @@
           required
         />
       </div>
-      <button type="submit" class="btn btn-primary">✅ Réserver</button>
+      <button type="submit" class="btn text-white" style="background-color: #2A48D4;">Réserver</button>
     </form>
   </div>
 </div>

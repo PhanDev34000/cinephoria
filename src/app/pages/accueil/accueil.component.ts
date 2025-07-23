@@ -25,18 +25,18 @@ export class AccueilComponent {
 
   this.filmService.getFilms().subscribe({
     next: (films: Film[]) => {
-      // 🔹 Tous les films à l'affiche (aucun filtrage)
+      // Tous les films à l'affiche (aucun filtrage)
       this.filmsAAffiche = films;       
 
-      // 🔹 Films du dernier mercredi (filtrés)
+      // Films du dernier mercredi (filtrés)
       this.filmsDuDernierMercredi = films.filter((film: Film) =>
         film.seances?.some((seance) => seance.jour === dernierMercredi)
       );
 
-       // 🔸 Pour chaque film, on récupère la note moyenne
+       // Pour chaque film, on récupère la note moyenne
       films.forEach(film => {
         this.avisService.getMoyenneNote(film._id!).subscribe({
-          next: moyenne => film.note = moyenne,
+          next: moyenne => film.note = Math.round(moyenne * 10) / 10,
           error: err => console.error(`❌ Erreur moyenne film ${film.titre}`, err)
         });
       });

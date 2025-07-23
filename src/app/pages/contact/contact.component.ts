@@ -13,6 +13,7 @@ export class ContactComponent {
   nomUtilisateur: string = '';
   titre: string = '';
   description: string = '';
+  email: string = '';
 
   envoyerMessage() {
     if (!this.titre.trim() || !this.description.trim()) {

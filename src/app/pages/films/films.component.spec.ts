@@ -164,4 +164,9 @@ describe('FilmsComponent (US5)', () => {
     component.toggleAvis(fakeFilms[0]);
     expect(component.filmAvisVisible['1']).toBeFalse();
   }));
+
+
+  
+
+
 });

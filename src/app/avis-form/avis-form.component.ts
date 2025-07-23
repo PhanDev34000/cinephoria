@@ -3,6 +3,7 @@ import { FormBuilder, FormGroup, Validators, FormsModule, ReactiveFormsModule } 
 import { AvisService } from '../services/avis.service';
 import { FilmService } from '../services/film.service'; 
 import { CommonModule } from '@angular/common';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-avis-form',
@@ -18,7 +19,8 @@ export class AvisFormComponent implements OnInit {
   constructor(
     private fb: FormBuilder,
     private avisService: AvisService,
-    private filmsService: FilmService 
+    private filmsService: FilmService ,
+    private router: Router
   ) {
     this.form = this.fb.group({
       filmId: [null, Validators.required], 
@@ -39,6 +41,7 @@ export class AvisFormComponent implements OnInit {
       this.avisService.envoyerAvis(this.form.value).subscribe({
         next: (res) => {
           alert('Avis envoyé avec succès !');
+          this.router.navigate(['/films']);
         },
         error: (err) => {
           console.error('❌ Erreur lors de l’envoi :', err);

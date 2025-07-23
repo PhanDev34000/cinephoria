@@ -1,9 +1,16 @@
+<div style="border: 2px solid #2A48D4; width: 60%; margin: 0 auto; background-color: #FFF8DC; padding: 1rem; border-radius: 10px;" class="mt-3">
+  <h1 class="text-center my-3">Bienvenue chez Cinéphoria !</h1>
+  <h2 class="text-center my-4">Le cinéma près de chez vous.</h2>
+</div>
+
+
+
 <div class="container">
-  <h2 class="text-center my-4">🎥 Films à l'affiche</h2>
+  <h2 class="text-center my-5">🎥 Films à l'affiche</h2>
   <div class="row justify-content-center">
-    <div class="col-md-4 mb-4" *ngFor="let film of filmsAAffiche">
-      <div class="card h-100">
-        <img [src]="film.imageUrl || 'assets/affiches/default.png'" class="card-img-top" [alt]="film.titre">
+    <div class="col-12 col-sm-6 col-md-4 col-lg-3 mb-4" *ngFor="let film of filmsAAffiche">
+      <div class="card h-100" style="background-color:#FFF8DC !important; box-shadow: -4px -4px 8px rgba(0, 0, 0, 0.1); border: 2px solid #2A48D4">
+        <img [src]="film.imageUrl || 'assets/affiches/default.png'" class="card-img-top mt-3" [alt]="film.titre">
         <div class="card-body text-center">
           <h5 class="card-title">{{ film.titre }}</h5>
           <p class="card-text">{{ film.genre }} — Note : {{ film.note || '–' }}/5</p>
@@ -16,16 +23,22 @@
 
 
 <div class="container mt-5">
-  <h2 class="mb-4" class="text-center my-4">Films ajoutés le dernier mercredi</h2>
-  <div class="row">
-    <div class="col-md-4 mb-4" *ngFor="let film of filmsDuDernierMercredi">
-      <div class="card h-100">
-        <img [src]="film.imageUrl" class="card-img-top" alt="Affiche de {{ film.titre }}">
-        <div class="card-body">
-          <h5 class="card-title">{{ film.titre }}</h5>
-          <p class="card-text">{{ film.description }}</p>
-        </div>
+  <h2 class="mb-4 text-center my-4">Films ajoutés le dernier mercredi</h2>
+
+<div *ngIf="filmsDuDernierMercredi.length > 0; else aucunFilm" class="row">
+  <div class="col-12 col-sm-6 col-md-4 col-lg-3 mb-4" *ngFor="let film of filmsDuDernierMercredi">
+    <div class="card h-100" style="background-color:#FFF8DC !important; box-shadow: -4px -4px 8px rgba(0, 0, 0, 0.1); border: 2px solid #2A48D4">
+      <img [src]="film.imageUrl" class="card-img-top mt-3" alt="Affiche de {{ film.titre }}">
+      <div class="card-body">
+        <h5 class="card-title">{{ film.titre }}</h5>
+        <p class="card-text">{{ film.description }}</p>
       </div>
     </div>
   </div>
+</div>
+
+<ng-template #aucunFilm>
+  <p class="text-center text-muted">Aucun film n'est sorti en salle ce dernier mercredi !</p>
+</ng-template>
+
 </div>

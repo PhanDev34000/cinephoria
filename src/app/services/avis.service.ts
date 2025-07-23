@@ -22,7 +22,7 @@ export class AvisService {
   return this.http.get<any[]>(`${this.apiUrl}/public?filmId=${filmId}&valide=true`);
   }
 
-  // 🔹 Récupérer la moyenne des notes d’un film
+  // Récupérer la moyenne des notes d’un film
 getMoyenneNote(filmId: string): Observable<number> {
   return this.http.get<{ moyenne: number }>(`${this.apiUrl}/film/${filmId}/moyenne-note`)
     .pipe(map(res => res.moyenne));
