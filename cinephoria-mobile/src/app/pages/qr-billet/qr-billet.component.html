@@ -1,0 +1,28 @@
+<ion-header>
+  <ion-toolbar color="primary">
+    <ion-title>🎟️ Mon billet</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="ion-padding">
+  <ion-card *ngIf="reservation">
+    <ion-card-header>
+      <ion-card-title>{{ reservation?.film?.titre }}</ion-card-title>
+    </ion-card-header>
+    <ion-card-content>
+      <p><strong>Jour :</strong> {{ reservation?.seance?.jour }}</p>
+      <p><strong>Heure :</strong> {{ reservation?.seance?.debut }} - {{ reservation?.seance?.fin }}</p>
+      <p><strong>Ville :</strong> {{ reservation?.seance?.cinema }}</p>
+      <p><strong>Nombre de places :</strong> {{ reservation?.nbPlaces }}</p>
+    </ion-card-content>
+  </ion-card>
+
+  <div class="qr-code-container" style="text-align: center; margin-top: 2rem;">
+    <qrcode 
+      [qrdata]="data" 
+      [width]="256" 
+      [errorCorrectionLevel]="'M'">
+    </qrcode>
+    <p class="ion-text-center mt-2">Présentez ce QR code lors du contrôle</p>
+  </div>
+</ion-content>

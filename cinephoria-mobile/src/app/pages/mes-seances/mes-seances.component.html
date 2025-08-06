@@ -1,0 +1,39 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-title>Mes séances</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+  <ion-list *ngIf="reservations.length > 0; else aucuneReservation">
+    <ion-item *ngFor="let resa of reservations">
+      <img [src]="resa.film?.imageUrl" alt="Affiche film"
+     style="width: 6%; height: auto; object-fit: contain; margin-right: 16px;" />
+
+      <ion-label>
+        <h2>{{ resa.film?.titre }}</h2>
+        <p>Jour : {{ resa.seance?.jour }}</p>
+        <p>Heure : {{ resa.seance?.debut }} - {{ resa.seance?.fin }}</p>
+        <p>Salle : {{ resa.seance.nomSalle }}</p>     
+        <p>Places réservées : {{ resa.nbPlaces }}</p>
+        <p *ngIf="resa.seance.sieges?.length > 0">
+          Sièges : {{ resa.seance.sieges.join(', ') }}
+        </p>
+      </ion-label>
+      <ion-button
+  fill="outline"
+  size="small"
+  [routerLink]="['/qr-billet']"
+  [state]="{ reservation: resa }">
+  Voir mon billet
+</ion-button>
+
+
+    </ion-item>
+  </ion-list>
+
+  <ng-template #aucuneReservation>
+    <ion-text>Aucune séance à venir.</ion-text>
+  </ng-template>
+</ion-content>
+
