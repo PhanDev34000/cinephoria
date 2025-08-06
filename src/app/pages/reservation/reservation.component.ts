@@ -123,15 +123,20 @@ export class ReservationComponent implements OnInit {
   }
 
   selectionnerSeance(seance: Seance): void {
-    this.seanceSelectionnee = seance;
+  if (!seance._id && (seance as any).id) {
+    seance._id = (seance as any).id; // compatibilité si le champ est mal nommé
   }
+  this.seanceSelectionnee = seance;
+}
+
 
   validerReservation(): void {
+    
     const film = this.films.find(f => f._id === this.selectedFilmId);
     const seance = this.seanceSelectionnee;
 
-    if (!film || !seance) {
-      
+    if (!film || !seance|| !seance._id) {
+      console.warn('Film ou séance invalide, réservation annulée');      
       return;
     }
 
@@ -144,6 +149,7 @@ export class ReservationComponent implements OnInit {
     const payload = JSON.parse(atob(token.split('.')[1]));
     const utilisateurEmail = payload.email || 'inconnu@cinephoria.fr';
 
+
     const reservation = {
       utilisateur: utilisateurEmail,
       film: {
@@ -152,12 +158,14 @@ export class ReservationComponent implements OnInit {
         imageUrl: film.imageUrl
       },
       seance: {
+        _id: seance._id,
         jour: seance.jour,
         debut: seance.debut,
         fin: seance.fin,
         qualite: seance.qualite,
         cinema: this.selectedVille,
-        prix: seance.prix
+        prix: seance.prix,
+        salleId: seance.salleId
       },
       nbPlaces: this.nbPlaces
     };

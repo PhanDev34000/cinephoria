@@ -1,0 +1,43 @@
+<h4 class="mt-4">Déclarer un incident</h4>
+<form [formGroup]="incidentForm" (ngSubmit)="onSubmit()" class="row g-3 align-items-center">
+  <div class="col-md-3">
+    <label for="salle" class="form-label">Salle :</label>
+    <select id="salle" formControlName="salleId" class="form-select">
+      <option *ngFor="let salle of salles" [value]="salle._id">{{ salle.nom }}</option>
+    </select>
+  </div>
+
+  <div class="col-md-3">
+    <label for="type" class="form-label">Type :</label>
+    <select id="type" formControlName="type" class="form-select">
+      <option value="Siège">Siège</option>
+      <option value="Projecteur">Projecteur</option>
+      <option value="Climatisation">Climatisation</option>
+      <option value="Éclairage">Éclairage</option>
+      <option value="Autre">Autre</option>
+    </select>
+  </div>
+
+  <div class="col-md-4">
+    <label for="description" class="form-label">Description :</label>
+    <textarea id="description" formControlName="description" class="form-control" rows="1"></textarea>
+  </div>
+
+  <div class="col-md-2 d-grid">
+    <button type="submit" class="btn btn-primary mt-4">Déclarer</button>
+  </div>
+</form>
+
+<hr class="my-4">
+
+<h4>Incidents déclarés</h4>
+<ul class="list-group">
+  <li *ngFor="let incident of incidents" class="list-group-item d-flex justify-content-between align-items-center">
+    <div>
+      <strong>{{ incident.type }}</strong> – {{ incident.description }}
+      <br>
+      <small class="text-muted">(Salle : {{ getNomSalle(incident.salleId) }})</small>
+    </div>
+    <button class="btn btn-outline-danger btn-sm" (click)="supprimerIncident(incident._id!)">Supprimer</button>
+  </li>
+</ul>

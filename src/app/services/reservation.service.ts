@@ -29,5 +29,8 @@ export class ReservationService {
   getReservationsParEmail(email: string) {
   return this.http.get<any[]>(`http://localhost:3000/api/reservations?email=${email}`);
 }
+getReservationsAVenir(email: string): Observable<any[]> {
+  return this.http.get<any[]>(`${this.apiUrl}/utilisateur/${email}`);
+}
 
 }

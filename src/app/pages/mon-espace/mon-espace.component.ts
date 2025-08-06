@@ -3,7 +3,8 @@ import { ReservationService } from '../../services/reservation.service';
 import { RouterModule } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-
+import { SallesService } from '../../services/salles.service';
+import { Salle } from '../../models/salle.model';
 
 @Component({
   selector: 'app-mon-espace',
@@ -12,12 +13,15 @@ import { FormsModule } from '@angular/forms';
   templateUrl: './mon-espace.component.html',
   styleUrls: ['./mon-espace.component.css']
 })
-
 export class MonEspaceComponent implements OnInit {
   reservations: any[] = [];
   emailUtilisateur: string | null = null;
+  salles: Salle[] = [];
 
-  constructor(private reservationService: ReservationService) {}
+  constructor(
+    private reservationService: ReservationService,
+    private sallesService: SallesService
+  ) {}
 
   ngOnInit(): void {
     // Récupérer l'email depuis le token
@@ -32,31 +36,49 @@ export class MonEspaceComponent implements OnInit {
     }
 
     if (this.emailUtilisateur) {
-      this.reservationService.getReservationsParEmail(this.emailUtilisateur).subscribe({
-        next: (data: any[]) => {
-          this.reservations = data;
+      // Étape 1 : charger les salles
+      this.sallesService.getSalles().subscribe({
+        next: (salles) => {
+          this.salles = salles;
+
+          // Étape 2 : charger les réservations
+          this.reservationService.getReservationsParEmail(this.emailUtilisateur!).subscribe({
+            next: (data: any[]) => {
+              // Ajouter nomSalle à chaque réservation
+              this.reservations = data.map(res => {
+                const salleTrouvee = this.salles.find(s => s._id === res.seance.salleId);
+                return {
+                  ...res,
+                  seance: {
+                    ...res.seance,
+                    nomSalle: salleTrouvee?.nom || 'Inconnue'
+                  }
+                };
+              });
+            },
+            error: (err: any) => {
+              console.error('❌ Erreur récupération réservations', err);
+            }
+          });
         },
-        error: (err: any) => {
-          console.error('❌ Erreur récupération réservations', err);
+        error: (err) => {
+          console.error('❌ Erreur chargement salles', err);
         }
       });
     }
   }
 
-
-
   supprimerReservation(id: string) {
-  if (confirm('Confirmer la suppression de cette réservation ?')) {
-    this.reservationService.supprimerReservation(id).subscribe({
-      next: () => {
-        console.log(`✅ Réservation ${id} supprimée.`);        
-        this.reservations = this.reservations.filter(r => r._id !== id);
-      },
-      error: (err) => {
-        console.error('❌ Erreur lors de la suppression :', err);
-      }
-    });
+    if (confirm('Confirmer la suppression de cette réservation ?')) {
+      this.reservationService.supprimerReservation(id).subscribe({
+        next: () => {
+          console.log(`✅ Réservation ${id} supprimée.`);
+          this.reservations = this.reservations.filter(r => r._id !== id);
+        },
+        error: (err) => {
+          console.error('❌ Erreur lors de la suppression :', err);
+        }
+      });
     }
   }
-
 }

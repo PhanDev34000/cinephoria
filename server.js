@@ -12,6 +12,7 @@ const seanceRoutes = require('./routes/seance.routes');
 const reservationRoutes = require('./routes/reservation.routes');
 const salleRoutes = require('./routes/salle.routes');
 const statsRoutes = require('./routes/stats.routes');
+const incidentRoutes = require('./routes/incident.routes');
 
 // Middlewares
 app.use(cors());
@@ -28,6 +29,7 @@ app.use('/api/seances', seanceRoutes);
 app.use('/api/reservations', reservationRoutes);
 app.use('/api/salles', salleRoutes);
 app.use('/api/stats', statsRoutes);
+app.use('/api/incidents', incidentRoutes);
 
 // Serve Angular static files (from dist/)
 app.use(express.static(path.join(__dirname, 'dist/cinephoria-web/browser')));
