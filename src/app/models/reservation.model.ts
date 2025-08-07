@@ -4,17 +4,18 @@ export interface Seance {
   fin: string;
   qualite?: string;
   cinema: string;
+  //salle : String;
   prix: number;
 }
 
 export interface Film {
   titre: string;
-  affiche: string; // chemin ou URL de l’image
+  affiche: string; 
 }
 
 export interface Reservation {
   _id?: string;
-  utilisateur: string; // email ou ID
+  utilisateur: string; 
   film: Film;
   seance: Seance;
   nbPlaces: number;

@@ -144,6 +144,11 @@ router.put('/employes/:id/reset-password', async (req, res) => {
 // POST Login - Générer un token JWT
 router.post('/login', async (req, res) => {
    const { email, password } = req.body;
+
+   console.log('📩 Tentative de login reçue');
+  console.log('📨 Email:', email);
+  console.log('🔑 Mot de passe:', password);
+
   try {
     const utilisateur = await User.findOne({ email });    
     if (!utilisateur) {
@@ -151,6 +156,9 @@ router.post('/login', async (req, res) => {
     }
 
     const isMatch = await bcrypt.compare(password, utilisateur.password);
+
+        console.log('🔍 Correspondance mot de passe :', isMatch);
+
    
     if (!isMatch) {
       return res.status(401).json({ message: 'Email ou mot de passe incorrect' });

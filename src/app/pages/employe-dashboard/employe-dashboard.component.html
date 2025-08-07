@@ -6,5 +6,11 @@
     <a routerLink="/admin/films" class="list-group-item list-group-item-action">🎬 Gérer les films</a>
     <a routerLink="/admin/seances" class="list-group-item list-group-item-action">🗓️ Gérer les séances</a>
     <a routerLink="/admin/salles" class="list-group-item list-group-item-action">🏟️ Gérer les salles</a>
+    <button (click)="afficherIncidents = !afficherIncidents" class="list-group-item list-group-item-action">
+    🛠️ Déclarer un incident
+    </button>
+    <div *ngIf="afficherIncidents">
+      <app-admin-incidents></app-admin-incidents>
+    </div>
   </div>
-</div>
+ 
