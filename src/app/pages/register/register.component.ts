@@ -8,7 +8,7 @@ import { NavigationService } from '../../services/navigation.service';
 @Component({
   selector: 'app-register',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, HttpClientModule],
+  imports: [CommonModule, ReactiveFormsModule],
   templateUrl: './register.component.html',
   styleUrls: ['./register.component.css']
 })
@@ -33,6 +33,8 @@ export class RegisterComponent {
   }
 
   onSubmit(): void {
+    console.log('SUBMIT: valid?', this.form.valid, this.form.value);
+
   this.form.markAllAsTouched();
 console.log('Form valid?', this.form.valid);
   if (this.form.valid) {
@@ -65,6 +67,11 @@ console.log('Form valid?', this.form.valid);
   } else {
     console.log('❌ Formulaire invalide');
   }
+}
+
+decodeToken(token: string): any {
+  const payload = JSON.parse(atob(token.split('.')[1]));
+return payload;
 }
 
 

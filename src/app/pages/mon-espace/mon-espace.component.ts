@@ -24,7 +24,7 @@ export class MonEspaceComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    // Récupérer l'email depuis le token
+        // Récupérer l'email depuis le token
     const token = localStorage.getItem('token');
     if (token) {
       try {

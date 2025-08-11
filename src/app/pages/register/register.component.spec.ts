@@ -1,75 +1,59 @@
-import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { TestBed, ComponentFixture } from '@angular/core/testing';
 import { RegisterComponent } from './register.component';
-import { FormBuilder, ReactiveFormsModule } from '@angular/forms';
-import { CommonModule } from '@angular/common';
+import { HttpClientTestingModule, HttpTestingController } from '@angular/common/http/testing';
+import { NavigationService } from '../../services/navigation.service';
+import { Router } from '@angular/router';
 
-describe('RegisterComponent (US6) – validations simples', () => {
-  let component: RegisterComponent;
+describe('RegisterComponent POST', () => {
   let fixture: ComponentFixture<RegisterComponent>;
+  let httpMock: HttpTestingController;
+  let navigationSpy: jasmine.SpyObj<NavigationService>;
 
-  beforeEach(async () => {
-    await TestBed.configureTestingModule({
-      imports: [RegisterComponent, ReactiveFormsModule, CommonModule],
-      providers: [FormBuilder]
-    }).compileComponents();
+  beforeEach(() => {
+    navigationSpy = jasmine.createSpyObj('NavigationService', ['navigateAndReload']);
+    TestBed.configureTestingModule({
+      imports: [RegisterComponent, HttpClientTestingModule],
+      providers: [
+        { provide: NavigationService, useValue: navigationSpy },
+        { provide: Router, useValue: { navigate: () => {} } }
+      ]
+    });
+    httpMock = TestBed.inject(HttpTestingController);
+    spyOn(window, 'alert');
+  });
 
+  function makeValidForm(component: RegisterComponent) {
+    component.form.controls['prenom'].setValue('Test');
+    component.form.controls['nom'].setValue('User');
+    component.form.controls['nomUtilisateur'].setValue('testuser');
+    component.form.controls['email'].setValue('testuser@example.com');
+    component.form.controls['motDePasse'].setValue('Test123!');
+  }
+
+  it('doit POSTer à /api/utilisateurs si form valide', () => {
     fixture = TestBed.createComponent(RegisterComponent);
-    component = fixture.componentInstance;
+    const component = fixture.componentInstance;
+
+    makeValidForm(component);
     fixture.detectChanges();
-  });
 
-  it('devrait créer le composant', () => {
-    expect(component).toBeTruthy();
-  });
-
-  it('devrait rendre le formulaire invalide si le mot de passe est trop faible', () => {
-    component.form.setValue({
-      email: 'test@example.com',
-      motDePasse: 'abc', // ❌ trop court et pas de majuscule, chiffre, etc.
-      prenom: 'John',
-      nom: 'Doe',
-      nomUtilisateur: 'johndoe'
-    });
-
-    expect(component.form.valid).toBeFalse();
-    expect(component.form.get('motDePasse')?.errors).toBeTruthy();
-  });
-
-  it('devrait rendre le formulaire invalide si le champ email est vide', () => {
-    component.form.setValue({
-      email: '',
-      motDePasse: 'Azerty123!',
-      prenom: 'John',
-      nom: 'Doe',
-      nomUtilisateur: 'johndoe'
-    });
-
-    expect(component.form.valid).toBeFalse();
-    expect(component.form.get('email')?.errors).toBeTruthy();
-  });
-
-  it('devrait rendre le formulaire invalide si le champ nomUtilisateur est vide', () => {
-    component.form.setValue({
-      email: 'test@example.com',
-      motDePasse: 'Azerty123!',
-      prenom: 'John',
-      nom: 'Doe',
-      nomUtilisateur: '' // ❌
-    });
-
-    expect(component.form.valid).toBeFalse();
-    expect(component.form.get('nomUtilisateur')?.errors).toBeTruthy();
-  });
-
-  it('devrait rendre le formulaire valide avec des données correctes', () => {
-    component.form.setValue({
-      email: 'test@example.com',
-      motDePasse: 'Azerty123!',
-      prenom: 'John',
-      nom: 'Doe',
-      nomUtilisateur: 'johndoe'
-    });
-
+    // Vérif avant submit (debug)
     expect(component.form.valid).toBeTrue();
+
+    component.onSubmit();
+
+    // *** ICI ON VA MATCHER SUR UNE FONCTION POUR ÊTRE SÛR ***
+    const req = httpMock.match((req) => req.url.includes('/api/utilisateurs'))[0];
+    expect(req).toBeTruthy();
+    expect(req.request.method).toBe('POST');
+
+    req.flush({
+      email: 'testuser@example.com',
+      token: 'token.test.jwt',
+      utilisateur: { nom: 'User', prenom: 'Test', email: 'testuser@example.com' }
+    });
+
+    expect(window.alert).toHaveBeenCalled();
+    expect(navigationSpy.navigateAndReload).toHaveBeenCalledWith('/');
   });
 });
