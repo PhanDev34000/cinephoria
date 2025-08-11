@@ -1,12 +1,26 @@
 (() => {
   const BACKEND = 'https://cinephoria-depl.onrender.com'; 
   const FROMS = ['http://localhost:3000', 'https://localhost:3000', 'http://127.0.0.1:3000'];
+  const API_ROOTS = ['films','avis','seances','reservations','utilisateurs','salles','stats','incidents','login','register'];
 
   const rewrite = (u) => {
     try {
-      const s = String(u);
+      let s = String(u).trim();
+      if (!s) return s;
+
+      // Remplacement localhost absolu
       for (const f of FROMS) if (s.startsWith(f)) return s.replace(f, BACKEND);
-      if (s.startsWith('/api') || s.startsWith('/affiches')) return BACKEND + s; // <— RELATIF -> API
+
+      // Normaliser les relatives sans slash -> "/..."
+      if (!s.startsWith('http') && !s.startsWith('/')) s = '/' + s;
+
+      // /api... ou /affiches... -> vers BACKEND
+      if (s.startsWith('/api') || s.startsWith('/affiches')) return BACKEND + s;
+
+      // Si on appelle directement /films, /seances, etc. -> préfixer /api
+      const first = s.split(/[/?#]/)[1] || '';
+      if (API_ROOTS.includes(first)) return BACKEND + '/api' + s;
+
       return s;
     } catch { return u; }
   };
