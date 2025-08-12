@@ -1,5 +1,5 @@
 (() => {
-  const BACKEND = 'https://cinephoria-depl.onrender.com'; 
+  const BACKEND = 'https://cinephoria-se44.onrender.com'; 
   const FROMS = ['http://localhost:3000', 'https://localhost:3000', 'http://127.0.0.1:3000'];
   const API_ROOTS = ['films','avis','seances','reservations','utilisateurs','salles','stats','incidents','login','register'];
 
