@@ -32,20 +32,23 @@ app.use('/api/stats', statsRoutes);
 app.use('/api/incidents', incidentRoutes);
 
 // Serve Angular static files (from dist/)
-app.use(express.static(path.join(__dirname, 'dist/cinephoria-web/browser')));
+//app.use(express.static(path.join(__dirname, 'dist/cinephoria-web/browser')));
 
 // Catch-all route for Angular
-app.get(/^\/(?!api).*/, (req, res) => {
-  res.sendFile(path.join(__dirname, 'dist/cinephoria-web/browser/index.html'));
-});
+//app.get(/^\/(?!api).*/, (req, res) => {
+//  res.sendFile(path.join(__dirname, 'dist/cinephoria-web/browser/index.html'));
+//});
 
 // MongoDB connection
 mongoose.connect(process.env.MONGO_URI)
 .then(() => console.log('✅ Connecté à MongoDB'))
 .catch(err => console.error('❌ Erreur MongoDB :', err));
 
-// Start server
-app.listen(PORT, () => {
-  console.log(`🚀 Serveur démarré sur http://localhost:${PORT}`);
+
+// 0.0.0.0 = écoute sur toutes les interfaces réseau (local + déploiement)
+const HOST = '0.0.0.0';
+
+app.listen(PORT, HOST, () => {
+  console.log(`🚀 API démarrée (port ${PORT})`);
 });
 
