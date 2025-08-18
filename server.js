@@ -15,7 +15,11 @@ const statsRoutes = require('./routes/stats.routes');
 const incidentRoutes = require('./routes/incident.routes');
 
 // Middlewares
-app.use(cors());
+app.use(cors({
+  origin: ['https://cinephoria-depl.onrender.com','http://localhost:4200' ],
+  methods: ['GET','POST','PUT','DELETE','OPTIONS'],
+  allowedHeaders: ['Content-Type','Authorization']
+}));
 app.use(express.json());
 
 // Servir les images statiques

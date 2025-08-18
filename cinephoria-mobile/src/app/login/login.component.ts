@@ -10,6 +10,7 @@ import { HttpClient } from '@angular/common/http';
   standalone: true,
   imports: [CommonModule, IonicModule, FormsModule],
   templateUrl: './login.component.html',
+  styleUrl: './login.component.scss'
 })
 export class LoginComponent {
   email: string = '';
@@ -25,11 +26,7 @@ export class LoginComponent {
     if (!this.email || !this.password) {
       this.presentToast('Veuillez remplir tous les champs');
       return;
-    }
-
-    console.log('🔍 Email:', this.email);
-console.log('🔐 Password:', this.password); // 👈 Ajoute ceci
-
+    }   
 
     this.http.post<any>('http://localhost:3000/api/utilisateurs/login', {
       email: this.email,

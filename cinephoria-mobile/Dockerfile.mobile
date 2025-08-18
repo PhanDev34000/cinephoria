@@ -1,0 +1,15 @@
+# Étape 1 : build Ionic/Angular
+FROM node:20-alpine AS build
+WORKDIR /app
+COPY package*.json ./
+RUN npm ci
+COPY . .
+RUN rm -rf www && npm run build -- --configuration production --output-hashing=all
+
+# Étape 2 : Nginx
+FROM nginx:alpine
+COPY nginx/conf.d/default.conf /etc/nginx/conf.d/default.conf
+# servir le bon dossier du build Angular 17
+COPY --from=build /app/www/browser /usr/share/nginx/html
+EXPOSE 80
+

@@ -1,0 +1,25 @@
+/* Fond */
+ion-content {
+  --background: var(--ion-color-secondary);              
+  --padding-top: 24px;
+  --padding-start: 16px;
+  --padding-end: 16px;
+}
+
+/* Champs / items */
+ion-item {
+  --background: #ffffff;
+  --border-radius: 12px;
+  --padding-start: 12px;
+  margin: 12px 0;
+  box-shadow: 0 2px 10px rgba(0,0,0,.06);
+}
+
+/* Bouton principal */
+ion-button {
+  --background: var(--ion-color-primary);
+  --border-radius: 12px;
+  height: 48px;
+  margin-top: 12px;
+}
+

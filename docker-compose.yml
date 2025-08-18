@@ -1,0 +1,40 @@
+services:
+  cine-api:
+    build:
+      context: .
+      dockerfile: Dockerfile.api
+    container_name: cine-api
+    env_file: .env              
+    ports:
+      - "3000:3000"
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "node", "-e", "require('http').get('http://localhost:3000/api/films',res=>process.exit(res.statusCode===200?0:1))"]
+      interval: 10s
+      timeout: 3s
+      retries: 5
+
+  cine-front:
+    build:
+      context: .
+      dockerfile: Dockerfile.front
+    container_name: cine-front
+    ports:
+      - "4200:80"
+    restart: unless-stopped
+    depends_on:
+      cine-api:
+        condition: service_healthy
+
+  cine-mobile:
+    build:
+      context: ./cinephoria-mobile
+      dockerfile: Dockerfile.mobile
+    container_name: cine-mobile
+    ports:
+      - "8100:80"
+    restart: unless-stopped
+    depends_on:
+      cine-api:
+        condition: service_healthy
+    

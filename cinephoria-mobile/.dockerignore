@@ -1,0 +1,14 @@
+node_modules
+www
+dist
+.git
+.angular
+.vscode
+Dockerfile
+Dockerfile.*
+npm-debug.log*
+yarn.lock
+pnpm-lock.yaml
+coverage
+tmp
+*.md

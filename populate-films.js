@@ -3,7 +3,7 @@ require('dotenv').config();
 const mongoose = require('mongoose');
 const Film = require('./models/film.model'); 
 
-mongoose.connect('mongodb+srv://vernierestephane:QNa4nJsnTLlieVWs@cluster0.jdntgz0.mongodb.net/cinephoria?retryWrites=true&w=majority&appName=Cluster0')
+mongoose.connect('mongodb+srv://vernierestephane:cinephoriapassword@cluster0.jdntgz0.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0')
 
   .then(() => console.log('✅ Connecté à MongoDB'))
   .catch(err => console.error('❌ Erreur connexion MongoDB :', err));
