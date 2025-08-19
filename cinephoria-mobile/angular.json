@@ -24,7 +24,8 @@
             "polyfills": ["zone.js"],
             "tsConfig": "tsconfig.app.json",
             "styles": ["src/global.scss"],
-            "scripts": []
+            "scripts": [],
+            "assets": ["src/favicon.ico", "src/assets"]
           },
           "configurations": {
             "production": {
