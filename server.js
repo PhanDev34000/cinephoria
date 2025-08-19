@@ -16,7 +16,7 @@ const incidentRoutes = require('./routes/incident.routes');
 
 // Middlewares
 app.use(cors({
-  origin: ['https://cinephoria-depl.onrender.com','http://localhost:4200' ],
+  origin: ['https://cinephoria-depl.onrender.com','http://localhost:4200','http://localhost:8100' ],
   methods: ['GET','POST','PUT','DELETE','OPTIONS'],
   allowedHeaders: ['Content-Type','Authorization']
 }));
