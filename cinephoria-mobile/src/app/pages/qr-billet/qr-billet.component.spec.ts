@@ -6,8 +6,7 @@ describe('QrBilletComponent', () => {
   let component: QrBilletComponent;
   let fixture: ComponentFixture<QrBilletComponent>;
 
-  beforeEach(async () => {
-    // ⚠️ Simuler history.state avant toute chose
+  beforeEach(async () => {    
     spyOnProperty(window, 'history').and.returnValue({
         state: {
             reservation: {
@@ -50,7 +49,7 @@ describe('QrBilletComponent', () => {
     fixture = TestBed.createComponent(QrBilletComponent);
     component = fixture.componentInstance;
 
-    component.ngOnInit(); // 👈 Doit venir après le mock
+    component.ngOnInit(); 
     fixture.detectChanges();
   });
 

@@ -27,8 +27,7 @@ export class QrBilletComponent implements OnInit {
   if (nav && nav.reservation) {
     this.reservation = nav.reservation;
     this.seanceId = this.reservation.seance._id;
-    this.data = `cinephoria:seance:${this.seanceId}`;
-    console.log('✅ Réservation reçue via navigation state :', this.reservation);
+    this.data = `cinephoria:seance:${this.seanceId}`;    
   } else {
     console.warn('❌ Aucune réservation reçue');
   }

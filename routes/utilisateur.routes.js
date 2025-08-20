@@ -67,15 +67,13 @@ router.post('/', async (req, res) => {
 
 router.put('/reset-password', async (req, res) => {
   const { email, newPassword } = req.body;
-  if (!email || !newPassword) {
-    console.log('❌ Données manquantes');
+  if (!email || !newPassword) {    
     return res.status(400).json({ message: 'Email et nouveau mot de passe requis' });
   }
 
   try {
     const user = await User.findOne({ email });
-    console.log('👤 Utilisateur trouvé :', user);
-
+    
     if (!user) {
       console.log('❌ Utilisateur introuvable');
       return res.status(404).json({ message: 'Utilisateur introuvable' });
@@ -85,8 +83,7 @@ router.put('/reset-password', async (req, res) => {
     user.password = hashed;
 
     await user.save();
-
-    console.log('✅ Mot de passe mis à jour');
+    
     res.status(200).json({ message: 'Mot de passe mis à jour' });
   } catch (error) {
     console.error('🔥 Erreur serveur :', error);
@@ -144,11 +141,6 @@ router.put('/employes/:id/reset-password', async (req, res) => {
 // POST Login - Générer un token JWT
 router.post('/login', async (req, res) => {
    const { email, password } = req.body;
-
-   console.log('📩 Tentative de login reçue');
-  console.log('📨 Email:', email);
-  console.log('🔑 Mot de passe:', password);
-
   try {
     const utilisateur = await User.findOne({ email });    
     if (!utilisateur) {
@@ -219,11 +211,10 @@ router.put('/:id', async (req, res) => {
       role
     };
 
-    // 👉 Si motDePasse est fourni : le hasher et le mettre à jour
+    // Si motDePasse est fourni : le hasher et le mettre à jour
     if (motDePasse && motDePasse.trim() !== '') {
       const hashed = await bcrypt.hash(motDePasse, 10);
-      updatedFields.password = hashed;
-      console.log('🔐 Nouveau mot de passe hashé pour employé/admin');
+      updatedFields.password = hashed;      
     }
 
     const updatedUser = await User.findByIdAndUpdate(
@@ -242,12 +233,10 @@ router.put('/:id', async (req, res) => {
 
 // Vérifie si email existe avant reset
 router.post('/check-email', async (req, res) => {
-  const { email } = req.body;
-   console.log('📩 Email reçu :', email);
+  const { email } = req.body;   
   if (!email) return res.status(400).json({ message: 'Email requis' });
 
-  const user = await User.findOne({ email });
-  console.log('🔍 Utilisateur trouvé :', user);
+  const user = await User.findOne({ email });  
   if (!user) return res.status(404).json({ message: 'Email introuvable' });
 
   res.status(200).json({ message: 'Email trouvé' });

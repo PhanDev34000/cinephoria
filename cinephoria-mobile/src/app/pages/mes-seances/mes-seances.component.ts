@@ -25,14 +25,13 @@ export class MesSeancesComponent implements OnInit {
   ngOnInit(): void {
     const token = localStorage.getItem('token');
     if (!token) {
-      console.warn('❌ Aucun token trouvé');
+      console.warn('Aucun token trouvé');
       return;
     }
 
     const payload = JSON.parse(atob(token.split('.')[1]));
     const email = payload.email;
-    console.log('✅ Email extrait du token :', email);
-
+    
     // Charger d’abord les salles
     this.sallesService.getSalles().subscribe({
       next: (salles) => {
@@ -40,13 +39,10 @@ export class MesSeancesComponent implements OnInit {
 
         // Ensuite charger les réservations à venir
         this.reservationsService.getReservationsAVenir(email).subscribe({
-          next: (reservations) => { 
-            console.log('📦 Réservations brutes :', reservations);  
-            console.log('🧾 Séance de chaque réservation :', reservations.map(r => r.seance));
-         
+          next: (reservations) => {          
             this.reservations = reservations.map(r => {
               const salle = this.salles.find(s => s._id === r.seance.salleId);
-              // 🎲 Génération de sièges aléatoires
+              // Génération de sièges aléatoires
               const sieges = this.genererSieges(r.nbPlaces)
               return {
                 ...r,

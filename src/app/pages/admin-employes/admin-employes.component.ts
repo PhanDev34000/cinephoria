@@ -56,13 +56,11 @@ export class AdminEmployesComponent implements OnInit {
     });
   }
 
-  modifierEmploye(employe: Employe): void {
-    console.log('🖊️ Édition employé :', employe);
+  modifierEmploye(employe: Employe): void {    
     this.employeEnCours = { ...employe };
   }
 
-  enregistrerModification(): void {
-    console.log('📤 Modification employé :', this.employeEnCours);
+  enregistrerModification(): void {    
     if (!this.employeEnCours || !this.employeEnCours._id) { console.warn('⛔ Aucune donnée employé en cours ou ID manquant.'); 
       return; };
 

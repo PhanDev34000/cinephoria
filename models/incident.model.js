@@ -22,7 +22,7 @@ const incidentSchema = new mongoose.Schema({
   auteur: {
     type: mongoose.Schema.Types.ObjectId,
     ref: 'User',
-    required: false // optionnel
+    required: false 
   }
 });
 

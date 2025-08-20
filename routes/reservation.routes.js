@@ -4,9 +4,7 @@ const Reservation = require('../models/reservation.model');
 const Seance = require('../models/seance.model'); 
 
 // POST Ajouter une réservation
-router.post('/', async (req, res) => {
-  console.log('📦 Données reçues pour réservation :', req.body);
-  
+router.post('/', async (req, res) => {  
   try {
     const { film, utilisateur, nbPlaces, seance } = req.body;
 
@@ -22,10 +20,6 @@ router.post('/', async (req, res) => {
     }
 
     // Crée la réservation avec la séance complète
-console.log('🎯 seanceComplete.toObject() :', seanceComplete.toObject());
-console.log('🎯 seance.cinema reçu dans le body :', seance.cinema);
-
-
     const reservation = new Reservation({
       film,
       utilisateur,

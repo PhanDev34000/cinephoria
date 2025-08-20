@@ -92,9 +92,6 @@ router.delete('/:id', verifyToken, verifyEmployeOrAdmin, async (req, res) => {
 router.get('/non-valides', verifyToken, verifyEmployeOrAdmin, async (req, res) => {
   try {
     const avis = await Avis.find({ valide: false });
-    console.log('📥 Requête reçue : récupération des avis non validés');
-console.log('🎯 Résultat attendu :', avis);
-
     res.status(200).json(avis);
   } catch (err) {
     res.status(500).json({ message: err.message });

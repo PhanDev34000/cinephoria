@@ -1,59 +1,83 @@
-# CinephoriaWeb
+Démo Cinephoria (Docker)
 
-This project was generated using [Angular CLI](https://github.com/angular/angular-cli) version 19.2.6.
+Prérequis : 
 
-## Development server
+Docker Desktop installé et démarré (Engine Running).
+Ports libres : 3000 (API), 4200 (Front web), 8100 (Mobile).
 
-To start a local development server, run:
+Lancer le projet (3 commandes) : 
 
-```bash
-ng serve
-```
+git clone https://github.com/PhanDev34000/cinephoria.git
+cd cinephoria
+docker compose up -d --build
 
-Once the server is running, open your browser and navigate to `http://localhost:4200/`. The application will automatically reload whenever you modify any of the source files.
+Attendez ~30–60s le temps que MongoDB et l’API soient prêts.
 
-## Code scaffolding
+Accès aux applications : 
 
-Angular CLI includes powerful code scaffolding tools. To generate a new component, run:
+Front Web (Angular) : http://localhost:4200
 
-```bash
-ng generate component component-name
-```
+Mobile (Ionic build web) : http://localhost:8100
 
-For a complete list of available schematics (such as `components`, `directives`, or `pipes`), run:
+API (Express) : http://localhost:3000/api/films
+ (JSON attendu)
 
-```bash
-ng generate --help
-```
+Astuce : si une page semble “attendre” juste après le lancement, actualisez après quelques secondes (initialisation DB/API).
 
-## Building
+Ce que fait la stack : 
 
-To build the project run:
+mongo : base locale persistée (volume mongo_data).
 
-```bash
-ng build
-```
+cine-api : lit MONGO_URI si fourni ; sinon fallback sur mongodb://mongo:27017/cinephoria.
 
-This will compile your project and store the build artifacts in the `dist/` directory. By default, the production build optimizes your application for performance and speed.
+cine-front : build Angular servi par Nginx.
 
-## Running unit tests
+cine-mobile : build Angular/Ionic servi par Nginx (styles OK, assets inclus).
 
-To execute unit tests with the [Karma](https://karma-runner.github.io) test runner, use the following command:
+(Optionnel) Utiliser MongoDB Atlas
 
-```bash
-ng test
-```
+Tests rapides : 
 
-## Running end-to-end tests
+API : ouvrir http://localhost:3000/api/films
+ → JSON OK.
 
-For end-to-end (e2e) testing, run:
+Front : se connecter avec un compte existant → navigation OK.
 
-```bash
-ng e2e
-```
+Mobile : http://localhost:8100
+ → connexion, page Réservations → affiches visibles.
 
-Angular CLI does not come with an end-to-end testing framework by default. You can choose one that suits your needs.
+Dépannage express : 
 
-## Additional Resources
+Docker Engine non lancé
+→ Ouvrir Docker Desktop, attendre “Engine Running”.
 
-For more information on using the Angular CLI, including detailed command references, visit the [Angular CLI Overview and Command Reference](https://angular.dev/tools/cli) page.
+Conflit de noms de conteneurs
+docker rm -f cine-mongo cine-api cine-front cine-mobile
+docker compose up -d --build
+
+
+Ports occupés
+→ Modifier les mappages dans docker-compose.yml (ex. 4201:80, 8101:80, 3001:3000) puis relancer.
+
+Page mobile sans styles
+→ Vérifier que cine-mobile n’a pas de volumes qui écrasent /usr/share/nginx/html. (Le compose fourni est correct.)
+
+Images d’affiches manquantes
+→ Les fichiers doivent exister sous cinephoria-mobile/src/assets/affiches/ (respect de la casse).
+→ Accès direct : http://localhost:8100/assets/affiches/<nom_fichier>.
+
+CORS
+→ L’API autorise http://localhost:4200 et http://localhost:8100.
+→ Si vous changez de ports, ajustez l’origin côté API.
+
+Voir les logs : 
+
+docker compose logs -f cine-api
+docker compose logs -f cine-front
+docker compose logs -f cine-mobile
+
+Arrêter / nettoyer : 
+docker compose down
+
+
+(Les données Mongo locales restent dans le volume mongo_data.)
