@@ -7,9 +7,11 @@ Ports libres : 3000 (API), 4200 (Front web), 8100 (Mobile).
 
 Lancer le projet (3 commandes) : 
 
-git clone https://github.com/PhanDev34000/cinephoria.git
-cd cinephoria
-docker compose up -d --build
+Cloner le dépôt : git clone https://github.com/PhanDev34000/cinephoria.git
+
+Entrer dans le dossier du projet : cd cinephoria
+
+Construire et lancer les conteneurs : docker compose up -d --build
 
 Attendez ~30–60s le temps que MongoDB et l’API soient prêts.
 
