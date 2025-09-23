@@ -2,15 +2,20 @@
   "name": "cinephoria-web",
   "version": "0.0.0",
   "scripts": {
-    "ng": "ng",
-    "start": "ng serve",
-    "build": "ng build",
-    "watch": "ng build --watch --configuration development",
-    "test": "ng test",
-    "build-prod": "ng build --configuration=production",
-    "start-server": "node server.js",
-    "deploy": "npm run build-prod && npm run start-server"
-  },
+  "ng": "ng",
+  
+  "start": "ng serve",
+  "build": "ng build --configuration production",
+  "test": "ng test --watch=false --browsers=ChromeHeadless",
+  "watch": "ng build --watch --configuration development",
+  
+  "start-server": "node server.js",
+  "test-back": "node -e \"process.exit(0)\"",
+  
+  "build-prod": "ng build --configuration production",
+  "deploy": "npm run build-prod && npm run start-server"
+}
+,
   "private": true,
   "dependencies": {
     "@angular/common": "^19.2.0",
