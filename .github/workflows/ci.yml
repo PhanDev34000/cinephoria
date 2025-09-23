@@ -1,0 +1,32 @@
+name: CI - Cinephoria
+
+on:
+  push:
+    branches: [ "main", "develop" ]
+  pull_request:
+    branches: [ "main", "develop" ]
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Récupération du code
+        uses: actions/checkout@v3
+
+      - name: Installer Node
+        uses: actions/setup-node@v3
+        with:
+          node-version: '18'
+
+      - name: Installer dépendances
+        run: npm install
+
+      - name: Tests Angular
+        run: npm run test
+
+      - name: Build Angular
+        run: npm run build
+
+      - name: Tests Back (placeholder)
+        run: npm run test-back
