@@ -52,7 +52,8 @@ mongoose.connect(process.env.MONGO_URI)
 // 0.0.0.0 = écoute sur toutes les interfaces réseau (local + déploiement)
 const HOST = '0.0.0.0';
 
-app.listen(PORT, HOST, () => {
-  console.log(`🚀 API démarrée (port ${PORT})`);
+app.listen(PORT, () => {
+  console.log(`🚀 API démarrée sur le port ${PORT}`);
 });
+
 
