@@ -1,6 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const Incident = require('../models/incident.model');
+const validateObjectId = require('../middlewares/validateObjectId');
 
 // Ajouter un incident
 router.post('/', async (req, res) => {
@@ -27,6 +28,14 @@ router.get('/', async (req, res) => {
 router.get('/par-salle', async (req, res) => {
   try {
     const { salleId } = req.query;
+    if (!salleId) {
+      return res.status(400).json({ message: 'salleId manquant' });
+    }
+    // ✅ Vérifie la validité de l’ObjectId
+    if (!require('mongoose').Types.ObjectId.isValid(salleId)) {
+      return res.status(400).json({ message: 'salleId invalide' });
+    }
+
     const incidents = await Incident.find({ salleId }).populate('salleId');
     res.status(200).json(incidents);
   } catch (err) {
@@ -34,8 +43,9 @@ router.get('/par-salle', async (req, res) => {
   }
 });
 
-// Supprimer un incident (optionnel)
-router.delete('/:id', async (req, res) => {
+
+// Supprimer un incident 
+router.delete('/:id', validateObjectId('id'), async (req, res) => {
   try {
     await Incident.findByIdAndDelete(req.params.id);
     res.status(200).json({ message: 'Incident supprimé avec succès' });
@@ -43,5 +53,6 @@ router.delete('/:id', async (req, res) => {
     res.status(500).json({ message: err.message });
   }
 });
+
 
 module.exports = router;
