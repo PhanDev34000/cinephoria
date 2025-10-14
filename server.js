@@ -35,14 +35,6 @@ app.use('/api/salles', salleRoutes);
 app.use('/api/stats', statsRoutes);
 app.use('/api/incidents', incidentRoutes);
 
-// Serve Angular static files (from dist/)
-//app.use(express.static(path.join(__dirname, 'dist/cinephoria-web/browser')));
-
-// Catch-all route for Angular
-//app.get(/^\/(?!api).*/, (req, res) => {
-//  res.sendFile(path.join(__dirname, 'dist/cinephoria-web/browser/index.html'));
-//});
-
 // MongoDB connection
 mongoose.connect(process.env.MONGO_URI)
 .then(() => console.log('✅ Connecté à MongoDB'))
@@ -52,8 +44,15 @@ mongoose.connect(process.env.MONGO_URI)
 // 0.0.0.0 = écoute sur toutes les interfaces réseau (local + déploiement)
 const HOST = '0.0.0.0';
 
-app.listen(PORT, () => {
-  console.log(`🚀 API démarrée sur le port ${PORT}`);
-});
+// ✅ Exporter l'app pour les tests Jest
+module.exports = app;
+
+// ✅ Ne démarrer le serveur que si ce fichier est exécuté directement
+if (require.main === module) {
+  app.listen(PORT, HOST, () => {
+    console.log(`🚀 API démarrée sur le port ${PORT}`);
+  });
+}
+
 
 
