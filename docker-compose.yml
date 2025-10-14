@@ -10,25 +10,23 @@ services:
     restart: unless-stopped
 
   cine-api:
-    build:
-      context: .
-      dockerfile: Dockerfile.api
-    container_name: cine-api
-    
-    environment:      
-      MONGO_URI: ${MONGO_URI:-mongodb+srv://vernierestephane:cinephoriapassword@cluster0.jdntgz0.mongodb.net/cinephoria?retryWrites=true&w=majority&appName=Cluster0}
-      JWT_SECRET: ${JWT_SECRET:-cleSuperSecrete123456}
-      PORT: 3000
-    depends_on:
-      - mongo
-    ports:
-      - "3000:3000"
-    restart: unless-stopped
-    healthcheck:
-      test: ["CMD", "node", "-e", "require('http').get('http://localhost:3000/api/films',res=>process.exit(res.statusCode===200?0:1))"]
-      interval: 10s
-      timeout: 3s
-      retries: 5
+  build:
+    context: .
+    dockerfile: Dockerfile.api
+  container_name: cine-api
+  env_file:
+    - .env           # ✅ charge automatiquement tes variables d’environnement
+  depends_on:
+    - mongo
+  ports:
+    - "3000:3000"
+  restart: unless-stopped
+  healthcheck:
+    test: ["CMD", "node", "-e", "require('http').get('http://localhost:3000/api/films',res=>process.exit(res.statusCode===200?0:1))"]
+    interval: 10s
+    timeout: 3s
+    retries: 5
+
 
   cine-front:
     build:
