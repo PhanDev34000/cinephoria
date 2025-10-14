@@ -36,7 +36,7 @@ router.get('/par-salle', async (req, res) => {
       return res.status(400).json({ message: 'salleId invalide' });
     }
 
-    const incidents = await Incident.find({ salleId }).populate('salleId');
+    const incidents = await Incident.find({ salleId: mongoose.Types.ObjectId(salleId) }).populate('salleId');
     res.status(200).json(incidents);
   } catch (err) {
     res.status(500).json({ message: err.message });
