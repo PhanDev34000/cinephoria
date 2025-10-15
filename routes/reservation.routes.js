@@ -89,20 +89,32 @@ router.delete('/:id', async (req, res) => {
 
 // Récupérer les réservations à venir pour un utilisateur donné
 router.get('/utilisateur/:email', async (req, res) => {
-  const email = decodeURIComponent(req.params.email);
-
   try {
-    const today = new Date().toISOString().split('T')[0]; // format 'YYYY-MM-DD'
+    // ✅ Nettoyage de l'email reçu
+    const rawEmail = decodeURIComponent(req.params.email);
+    const email = String(rawEmail).trim().toLowerCase();
 
+    // ✅ Vérification du format email
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(email)) {
+      return res.status(400).json({ message: 'Format d’email invalide' });
+    }
+
+    // ✅ Date du jour
+    const today = new Date().toISOString().split('T')[0];
+
+    // ✅ Requête sécurisée
     const reservations = await Reservation.find({
       utilisateur: email,
-      'seance.jour': { $gte: today } // filtre sur la date de la séance
-    });
+      'seance.jour': { $gte: today }
+    }).lean();
 
     res.json(reservations);
   } catch (error) {
+    console.error('Erreur lors de la récupération des réservations :', error);
     res.status(500).json({ message: 'Erreur lors de la récupération des réservations.' });
   }
 });
+
 
 module.exports = router;
