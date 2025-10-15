@@ -21,10 +21,21 @@ router.get('/public', async (req, res) => {
     const { filmId, valide } = req.query;
     const filtre = {};
 
-    if (filmId) filtre.filmId = filmId;
-    if (valide !== undefined) filtre.valide = valide === 'true';
+    // ✅ Validation manuelle du filmId
+    if (filmId && mongoose.isValidObjectId(filmId)) {
+      filtre.filmId = new mongoose.Types.ObjectId(filmId);
+    }
 
-    const avis = await Avis.find(filtre);
+    // ✅ Validation du paramètre "valide"
+    if (valide !== undefined) {
+      if (valide === 'true' || valide === 'false') {
+        filtre.valide = valide === 'true';
+      } else {
+        return res.status(400).json({ message: 'Valeur invalide pour "valide"' });
+      }
+    }
+
+    const avis = await Avis.find(filtre).lean();
     res.status(200).json(avis);
   } catch (err) {
     res.status(500).json({ message: err.message });
