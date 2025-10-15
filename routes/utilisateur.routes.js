@@ -163,7 +163,6 @@ router.post('/login', async (req, res) => {
     }
 
     const isMatch = await bcrypt.compare(password, utilisateur.password);
-
         console.log('🔍 Correspondance mot de passe :', isMatch);
 
    
