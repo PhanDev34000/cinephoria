@@ -151,7 +151,13 @@ router.put('/employes/:id/reset-password', async (req, res) => {
 router.post('/login', async (req, res) => {
    const { email, password } = req.body;
   try {
-    const utilisateur = await User.findOne({ email });    
+    const { error } = emailSchema.validate({ email });
+    if (error) {
+      return res.status(400).json({ message: 'Email invalide' });
+    }
+
+    const utilisateur = await User.findOne({ email: { $eq: email.trim().toLowerCase() } }).lean();
+
     if (!utilisateur) {
       return res.status(401).json({ message: 'Email ou mot de passe incorrect' });
     }
@@ -244,7 +250,13 @@ router.put('/:id', async (req, res) => {
 router.post('/check-email', async (req, res) => {
   const { email } = req.body;   
   if (!email) return res.status(400).json({ message: 'Email requis' });
-  const user = await User.findOne({ email });  
+  const { error } = emailSchema.validate({ email });
+  if (error) {
+    return res.status(400).json({ message: 'Email invalide' });
+  }
+
+  const user = await User.findOne({ email: { $eq: email.trim().toLowerCase() } }).lean();
+
   if (!user) return res.status(404).json({ message: 'Email introuvable' });
 
   res.status(200).json({ message: 'Email trouvé' });
