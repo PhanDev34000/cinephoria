@@ -22,7 +22,7 @@ router.post('/', async (req, res) => {
     const { nom, prenom, email, nomUtilisateur, motDePasse } = req.body;
 
     // Vérifier si l'email existe déjà
-    const existant = await User.findOne({ email });
+    const existant = await User.findOne({ email: { $eq: email } }).lean();
     if (existant) {
       return res.status(409).json({ message: 'Un compte existe déjà avec cet email.' });
     }
