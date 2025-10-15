@@ -142,9 +142,6 @@ router.get('/non-valides', verifyToken, verifyEmployeOrAdmin, async (req, res) =
 });
 
 // Route pour calculer la moyenne des notes d’un film (avis validés uniquement)
-const mongoose = require('mongoose');
-
-// ...
 
 router.get('/film/:filmId/moyenne-note', async (req, res) => {
   try {
