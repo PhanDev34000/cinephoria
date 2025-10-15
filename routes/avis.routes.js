@@ -21,15 +21,14 @@ router.get('/public', async (req, res) => {
     const { filmId, valide } = req.query;
     const filtre = {};
 
-    // ✅ Validation manuelle du filmId
     if (filmId && mongoose.isValidObjectId(filmId)) {
-      filtre.filmId = new mongoose.Types.ObjectId(filmId);
+      // Utiliser $eq pour défendre contre l’injection
+      filtre.filmId = { $eq: new mongoose.Types.ObjectId(filmId) };
     }
 
-    // ✅ Validation du paramètre "valide"
     if (valide !== undefined) {
       if (valide === 'true' || valide === 'false') {
-        filtre.valide = valide === 'true';
+        filtre.valide = { $eq: (valide === 'true') };
       } else {
         return res.status(400).json({ message: 'Valeur invalide pour "valide"' });
       }
@@ -41,6 +40,7 @@ router.get('/public', async (req, res) => {
     res.status(500).json({ message: err.message });
   }
 });
+
 
 
 // Récupérer tous les avis (utilisé côté admin/employé)
