@@ -5,6 +5,11 @@ const jwt = require('jsonwebtoken');
 const User = require('../models/user.model');
 const { verifyToken } = require('../middlewares/auth.middleware');
 const { verifyEmploye } = require('../middlewares/role.middleware');
+const Joi = require('joi');
+
+const emailSchema = Joi.object({
+  email: Joi.string().email().required()
+});
 
 // GET Tous les utilisateurs
 router.get('/', async (req, res) => {
@@ -19,10 +24,11 @@ router.get('/', async (req, res) => {
 // POST Créer un compte utilisateur
 router.post('/', async (req, res) => {
   try {
-    const { nom, prenom, email, nomUtilisateur, motDePasse } = req.body;
-
-    // Vérifier si l'email existe déjà
-    const existant = await User.findOne({ email: { $eq: email } }).lean();
+    const { nom, prenom, email, nomUtilisateur, motDePasse } = req.body;   
+    const { error } = emailSchema.validate({ email });
+    if (error) {
+      return res.status(400).json({ message: 'Email invalide' });
+    }
     if (existant) {
       return res.status(409).json({ message: 'Un compte existe déjà avec cet email.' });
     }
@@ -64,16 +70,13 @@ router.post('/', async (req, res) => {
 });
 
 // Réinitialiser un mdp d'un utilisateur
-
 router.put('/reset-password', async (req, res) => {
   const { email, newPassword } = req.body;
   if (!email || !newPassword) {    
     return res.status(400).json({ message: 'Email et nouveau mot de passe requis' });
   }
-
   try {
-    const user = await User.findOne({ email });
-    
+    const user = await User.findOne({ email });    
     if (!user) {
       console.log('❌ Utilisateur introuvable');
       return res.status(404).json({ message: 'Utilisateur introuvable' });
@@ -95,7 +98,6 @@ router.put('/reset-password', async (req, res) => {
 router.post('/employes', async (req, res) => {
   try {
     const { nom, prenom, email, nomUtilisateur, motDePasse, role } = req.body;
-
     if (role !== 'employe' && role !== 'admin') {
       return res.status(400).json({ message: 'Rôle invalide' });
     }
@@ -235,7 +237,6 @@ router.put('/:id', async (req, res) => {
 router.post('/check-email', async (req, res) => {
   const { email } = req.body;   
   if (!email) return res.status(400).json({ message: 'Email requis' });
-
   const user = await User.findOne({ email });  
   if (!user) return res.status(404).json({ message: 'Email introuvable' });
 
