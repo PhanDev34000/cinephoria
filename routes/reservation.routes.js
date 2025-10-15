@@ -52,26 +52,30 @@ router.post('/', async (req, res) => {
 //Get Récupérer les réservations
 router.get('/', async (req, res) => {
   try {
-    const email = req.query.email;
+    const { email } = req.query;
 
     if (!email) {
       return res.status(400).json({ message: "Email requis" });
     }
 
-    // Validation de l'email
+    // ✅ Validation du format email
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!emailRegex.test(email)) {
       return res.status(400).json({ message: "Format d'email invalide" });
     }
 
-    // Construction explicite de la requête avec $eq
-    const reservations = await Reservation.find({ utilisateur: { $eq: email } }).lean();
+    // ✅ Neutralisation : création d'une constante indépendante
+    const safeEmail = String(email).trim().toLowerCase();
+
+    // ✅ Requête sécurisée
+    const reservations = await Reservation.find({ utilisateur: safeEmail }).lean();
 
     res.json(reservations);
   } catch (err) {
     res.status(500).json({ message: err.message });
   }
 });
+
 
 // DELETE Supprimer une réservation
 router.delete('/:id', async (req, res) => {
