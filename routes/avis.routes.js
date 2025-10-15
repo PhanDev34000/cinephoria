@@ -77,19 +77,19 @@ router.post('/',
     try {
       const { filmId, note, commentaire } = req.body;
 
-      // ✅ Vérification explicite de l’ObjectId
+      // Vérification explicite de l’ObjectId
       if (!mongoose.isValidObjectId(filmId)) {
         return res.status(400).json({ message: 'ID de film invalide' });
       }
 
-      // ✅ Construction explicite et contrôlée des données autorisées
+      // Construction explicite et contrôlée des données autorisées
       const avisData = {
         filmId: new mongoose.Types.ObjectId(filmId),
         note: Number(note),
         commentaire: commentaire ? String(commentaire) : ''
       };
 
-      // ✅ Pas de création directe avec req.body
+      // Pas de création directe avec req.body
       const doc = new Avis(avisData);
       await doc.save();
 

@@ -1,4 +1,4 @@
-module.exports = function (config) {
+function configureKarma(config) {
   config.set({
     basePath: '',
     frameworks: ['jasmine', '@angular-devkit/build-angular'],
@@ -27,3 +27,4 @@ module.exports = function (config) {
     restartOnFileChange: true
   });
 };
+module.exports = configureKarma;
