@@ -3,6 +3,16 @@ const router = express.Router();
 const { verifyToken } = require('../middlewares/auth.middleware');
 const { verifyEmployeOrAdmin } = require('../middlewares/role.middleware');
 const Avis = require('../models/avis.model');
+const mongoose = require('mongoose');
+const Joi = require('joi');
+const validateObjectId = require('../middlewares/validateObjectId');
+const validateBody = require('../middlewares/validateBody');
+
+const schemaAvis = Joi.object({
+  filmId: Joi.string().required(),
+  note: Joi.number().integer().min(0).max(5).required(),
+  commentaire: Joi.string().allow('').max(1000)
+});
 
 // Route publique pour récupérer les avis validés d’un film via query (filmId + valide)
 router.get('/public', async (req, res) => {
@@ -32,32 +42,45 @@ router.get('/', verifyToken, verifyEmployeOrAdmin, async (req, res) => {
 });
 
 // Récupérer les avis d’un film (public, seulement les validés)
-router.get('/film/:filmId', async (req, res) => {
-  try {
-    const avis = await Avis.find({ filmId: req.params.filmId, valide: true });
-    res.status(200).json(avis);
-  } catch (err) {
-    res.status(500).json({ message: err.message });
+router.get('/par-film/:filmId',
+  validateObjectId('filmId'),
+  async (req, res) => {
+    try {
+      // Conversion explicite pour éviter toute injection
+      const filmObjectId = new mongoose.Types.ObjectId(req.params.filmId);
+
+      const avis = await Avis.find({ filmId: filmObjectId }).lean();
+      res.status(200).json(avis);
+    } catch (err) {
+      res.status(500).json({ message: err.message });
+    }
   }
-});
+);
+
 
 // Ajouter un avis (réservé aux utilisateurs connectés)
-router.post('/', verifyToken, async (req, res) => {
-  try {
-    const { filmId, note, commentaire } = req.body;
-    const nouvelAvis = new Avis({
-      filmId,
-      utilisateurId: req.user.id,
-      note,
-      commentaire,
-      valide: false 
-    });
-    await nouvelAvis.save();
-    res.status(201).json({ message: 'Avis ajouté, en attente de validation.' });
-  } catch (err) {
-    res.status(400).json({ message: err.message });
+router.post('/',
+  validateBody(schemaAvis),
+  async (req, res) => {
+    try {
+      const { filmId, note, commentaire } = req.body;
+
+      // Conversion explicite pour éviter toute injection
+      const filmObjectId = new mongoose.Types.ObjectId(filmId);
+
+      const doc = await Avis.create({
+        filmId: filmObjectId,
+        note,
+        commentaire
+      });
+
+      res.status(201).json(doc);
+    } catch (err) {
+      res.status(400).json({ message: err.message });
+    }
   }
-});
+);
+
 
 // Valider un avis (réservé aux employés)
 router.put('/:id/valider', verifyToken, verifyEmployeOrAdmin, async (req, res) => {

@@ -4,7 +4,7 @@ services:
     image: mongo:6
     container_name: cine-mongo
     ports:
-      - "27017:27017"          # optionnel (utile en debug)
+      - "27017:27017"          
     volumes:
       - mongo_data:/data/db
     restart: unless-stopped
@@ -15,7 +15,7 @@ services:
     dockerfile: Dockerfile.api
   container_name: cine-api
   env_file:
-    - .env           # ✅ charge automatiquement tes variables d’environnement
+    - .env           
   depends_on:
     - mongo
   ports:
