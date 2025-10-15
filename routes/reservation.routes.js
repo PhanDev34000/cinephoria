@@ -34,8 +34,6 @@ router.post('/', async (req, res) => {
         salleId: seanceComplete.salleId,
         cinema: seance.cinema 
       }
-
-
     });
 
     await reservation.save();
@@ -51,7 +49,6 @@ router.post('/', async (req, res) => {
   }
 });
 
-
 //Get Récupérer les réservations
 router.get('/', async (req, res) => {
   try {
@@ -61,7 +58,15 @@ router.get('/', async (req, res) => {
       return res.status(400).json({ message: "Email requis" });
     }
 
-    const reservations = await Reservation.find({ utilisateur: email });
+    // Validation de l'email
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(email)) {
+      return res.status(400).json({ message: "Format d'email invalide" });
+    }
+
+    // Construction explicite de la requête avec $eq
+    const reservations = await Reservation.find({ utilisateur: { $eq: email } }).lean();
+
     res.json(reservations);
   } catch (err) {
     res.status(500).json({ message: err.message });
@@ -95,8 +100,5 @@ router.get('/utilisateur/:email', async (req, res) => {
     res.status(500).json({ message: 'Erreur lors de la récupération des réservations.' });
   }
 });
-
-
-
 
 module.exports = router;
