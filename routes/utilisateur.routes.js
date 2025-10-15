@@ -29,6 +29,7 @@ router.post('/', async (req, res) => {
     if (error) {
       return res.status(400).json({ message: 'Email invalide' });
     }
+    const existant = await User.findOne({ email: { $eq: email.trim().toLowerCase() } }).lean();
     if (existant) {
       return res.status(409).json({ message: 'Un compte existe déjà avec cet email.' });
     }
@@ -76,7 +77,13 @@ router.put('/reset-password', async (req, res) => {
     return res.status(400).json({ message: 'Email et nouveau mot de passe requis' });
   }
   try {
-    const user = await User.findOne({ email });    
+   const { error } = emailSchema.validate({ email });
+    if (error) {
+      return res.status(400).json({ message: 'Email invalide' });
+    }
+
+    const user = await User.findOne({ email: { $eq: email.trim().toLowerCase() } }).lean();
+
     if (!user) {
       console.log('❌ Utilisateur introuvable');
       return res.status(404).json({ message: 'Utilisateur introuvable' });
